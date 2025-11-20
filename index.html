@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>أجي تخدم - بوابة الوظائف في المغرب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      html {
+        font-size: 106.25%; /* 17px base font size */
+      }
+      body {
+        font-family: 'Tajawal', sans-serif;
+        line-height: 1.7; /* Enhanced line spacing for better readability */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      /* Use Cairo for headings, buttons, and other prominent UI elements for a strong visual hierarchy */
+      h1, h2, h3, h4, h5, h6, button, header nav > div:first-child {
+        font-family: 'Cairo', sans-serif;
+      }
+    </style>
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+</head>
+  <body>
+    <script>
+      function handleCredentialResponse(response) {
+        const event = new CustomEvent('google-signin-success', { detail: response });
+        window.dispatchEvent(event);
+      }
+    </script>
+    <div id="g_id_onload"
+         data-client_id="190212674081-b09lkcfs2usccimtbah73uek10ud6oke.apps.googleusercontent.com"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
