@@ -132,8 +132,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onNavigate, userRole, isAu
             className="text-2xl sm:text-3xl font-extrabold cursor-pointer flex items-center gap-1"
             onClick={() => onNavigate(isAuthenticated && isProfileComplete ? View.JobBoard : View.Home)}
         >
-          <span className="text-indigo-400">أجي</span>
-          <span className="text-amber-400">تخدم</span>
+          <span className="text-indigo-500">أجي</span>
+          <span className="text-amber-500">تخدم</span>
         </div>
         
         {/* Desktop Nav */}

@@ -23,21 +23,8 @@ import MessagesPage from './components/MessagesPage';
 import Toast from './components/Toast';
 import CompanyProfilePage from './components/CompanyProfilePage';
 import UserProfileView from './components/UserProfileView';
-import GoogleAccountSelectorModal from './components/GoogleAccountSelectorModal';
-
-const decodeJwtResponse = (token: string) => {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-    } catch (e) {
-        console.error("Error decoding JWT", e);
-        return null;
-    }
-};
+import { auth, googleProvider } from './firebase';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.Home);
@@ -50,7 +37,6 @@ const App: React.FC = () => {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [reportingJob, setReportingJob] = useState<Job | null>(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [filters, setFilters] = useState<Filters>({ education: [], languages: [] });
   const [userProfiles, setUserProfiles] = useState<UserProfile[]>(MOCK_USER_PROFILES);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -62,58 +48,40 @@ const App: React.FC = () => {
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
   const [viewingProfileId, setViewingProfileId] = useState<{type: 'user' | 'company', id: number} | null>(null);
 
-
   const isProfileComplete = (userRole === 'jobSeeker' && !!userProfile) || (userRole === 'employer' && !!companyProfile);
 
-  const handleGoogleAccountSelected = (account: MockGoogleAccount) => {
-    setIsGoogleModalOpen(false);
-    if (!userRole) return; 
-
-    const existingUser = MOCK_USERS.find(u => u.email === account.email);
-
-    if (existingUser) {
-        if (existingUser.role !== userRole) {
-            setToast({ message: `هذا الحساب مسجل كـ ${existingUser.role === 'jobSeeker' ? 'باحث عن عمل' : 'صاحب عمل'}. يرجى تسجيل الدخول من الخيار الصحيح.`, type: 'success'});
-            setUserRole(null);
-            setCurrentView(View.Home);
-            return;
-        }
-        handleLogin(existingUser);
-        setToast({ message: `تم تسجيل الدخول بنجاح كـ ${account.name}!`, type: 'success' });
-    } else {
-        handleSignUp({ email: account.email, role: userRole });
-        setToast({ message: `مرحباً بك ${account.name}! يرجى إكمال ملفك الشخصي للبدء.`, type: 'success' });
-    }
-  };
-
+  // Listen for Firebase Auth state changes
   useEffect(() => {
-    const handleGoogleSignIn = (event: CustomEvent) => {
-        const response = event.detail;
-        if (response.credential && userRole) {
-            const userObject = decodeJwtResponse(response.credential);
-            if (userObject) {
-                const account: MockGoogleAccount = {
-                    name: userObject.name,
-                    email: userObject.email,
-                    avatarUrl: userObject.picture,
-                };
-                handleGoogleAccountSelected(account);
-            }
-        } else if (!userRole) {
-            // Handle case where user tries to sign in without selecting a role first
-            setToast({ message: 'الرجاء اختيار دورك (باحث عن عمل أو صاحب عمل) أولاً.', type: 'success' });
-            setCurrentView(View.Home);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        // If userRole is already set (e.g., from sign up flow), good.
+        // If not, we might be reloading. In this prototype, we fallback to 'jobSeeker' if not set,
+        // or check if email exists in MOCK_USERS to recover role.
+        if (!userRole) {
+             const mockUser = MOCK_USERS.find(u => u.email === user.email);
+             if (mockUser) {
+                 setUserRole(mockUser.role);
+                 handleLogin(mockUser); // Re-hydrate profile state
+             }
         }
-    };
+      } else {
+        setIsAuthenticated(false);
+        setUserRole(null);
+        setUserProfile(null);
+        setCompanyProfile(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
-    window.addEventListener('google-signin-success', handleGoogleSignIn as EventListener);
-
-    return () => {
-        window.removeEventListener('google-signin-success', handleGoogleSignIn as EventListener);
-    };
-  }, [userRole]); // Rerun if userRole changes to capture the correct role
 
   const onNavigate = (view: View) => {
+    // Reset role if navigating to AuthChoice while not authenticated to allow re-selection
+    if (view === View.AuthChoice && !isAuthenticated) {
+        setUserRole(null);
+    }
+
     // Prevent access to protected views if not authenticated
     const protectedViews = [View.JobBoard, View.Profile, View.Messages, View.PostJobForm];
     if (protectedViews.includes(view) && !isAuthenticated) {
@@ -139,11 +107,6 @@ const App: React.FC = () => {
                  handleSelectConversation(conversations[0].id);
             }
         }
-    }
-
-    // Reset role if navigating to AuthChoice while not authenticated
-    if (view === View.AuthChoice && !isAuthenticated) {
-        setUserRole(null);
     }
 
     setCurrentView(view);
@@ -227,18 +190,55 @@ const App: React.FC = () => {
       }
   };
 
-  const handleSocialLogin = () => {
-      // This will now only be used for non-Google social logins like FB, GitHub
-      setIsGoogleModalOpen(true);
+  const handleSocialLogin = async () => {
+      if (!userRole) {
+        setToast({ message: 'الرجاء اختيار دورك أولاً (باحث عن عمل أو صاحب عمل).', type: 'success' });
+        return;
+      }
+
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        
+        // Check if user exists in mock data (to maintain consistency with prototype data)
+        const existingUser = MOCK_USERS.find(u => u.email === user.email);
+
+        if (existingUser) {
+             if (existingUser.role !== userRole) {
+                setToast({ message: `هذا الحساب مسجل كـ ${existingUser.role === 'jobSeeker' ? 'باحث عن عمل' : 'صاحب عمل'}. يرجى تسجيل الدخول من الخيار الصحيح.`, type: 'success'});
+                await signOut(auth); // Sign out if role mismatch
+                return;
+            }
+            handleLogin(existingUser);
+            setToast({ message: `تم تسجيل الدخول بنجاح كـ ${user.displayName || user.email}!`, type: 'success' });
+        } else {
+            // New user via Google
+             handleSignUp({ email: user.email || '', role: userRole });
+             setToast({ message: `مرحباً بك ${user.displayName || ''}! يرجى إكمال ملفك الشخصي للبدء.`, type: 'success' });
+        }
+      } catch (error: any) {
+        console.error("Social login error:", error);
+        if (error.code === 'auth/popup-closed-by-user') {
+            // User just closed the popup, no need to show a scary error
+            return;
+        }
+        setToast({ message: 'حدث خطأ أثناء تسجيل الدخول بواسطة جوجل.', type: 'success' });
+      }
   };
 
 
-  const handleLogout = () => {
-      setIsAuthenticated(false);
-      setUserRole(null);
-      setUserProfile(null); 
-      setCompanyProfile(null); 
-      setCurrentView(View.Home);
+  const handleLogout = async () => {
+      try {
+        await signOut(auth);
+        setIsAuthenticated(false);
+        setUserRole(null);
+        setUserProfile(null); 
+        setCompanyProfile(null); 
+        setCurrentView(View.Home);
+        setToast({ message: 'تم تسجيل الخروج بنجاح.', type: 'success' });
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
   };
 
   const handleProfileUpdate = (updatedProfile: UserProfile) => {
@@ -381,7 +381,7 @@ const App: React.FC = () => {
       case View.About: return <AboutPage />;
       case View.Contact: return <ContactPage />;
       case View.AuthChoice: return <AuthChoice onNavigate={onNavigate} userRole={userRole} onSelectRole={setUserRole} onSocialLogin={handleSocialLogin} />;
-      case View.Login: return <Login onLogin={handleLogin} onNavigate={onNavigate} onSocialLogin={handleSocialLogin} />;
+      case View.Login: return <Login onLogin={handleLogin} onNavigate={onNavigate} onSocialLogin={handleSocialLogin} userRole={userRole} />;
       case View.SignUp: return <SignUp onSignUp={(creds) => handleSignUp(creds)} onNavigate={onNavigate} userRole={userRole} onSocialLogin={handleSocialLogin} />;
       case View.Profile: return userProfile ? <ProfilePage userProfile={userProfile} onUpdateProfile={handleProfileUpdate} /> : <Onboarding onOnboardingComplete={handleOnboardingComplete} />;
       case View.Messages: return <MessagesPage 
@@ -457,12 +457,6 @@ const App: React.FC = () => {
         onClose={() => setIsFilterModalOpen(false)}
         onApply={handleApplyFilters}
         currentFilters={filters}
-      />
-      <GoogleAccountSelectorModal
-        isOpen={isGoogleModalOpen}
-        onClose={() => setIsGoogleModalOpen(false)}
-        accounts={MOCK_GOOGLE_ACCOUNTS}
-        onSelectAccount={handleGoogleAccountSelected}
       />
     </div>
   );

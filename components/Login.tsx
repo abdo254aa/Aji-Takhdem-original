@@ -2,28 +2,50 @@ import React, { useState } from 'react';
 import { View, MockUser, UserRole } from '../types';
 import SocialSignInButtons from './GoogleSignInButton';
 import { MOCK_USERS } from '../constants';
-
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 interface LoginProps {
     onLogin: (user: MockUser) => void;
     onNavigate: (view: View) => void;
     onSocialLogin: () => void;
+    userRole: UserRole;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, onNavigate, onSocialLogin }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, onNavigate, onSocialLogin, userRole }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const user = MOCK_USERS.find(u => u.email === email && u.password === password);
-        
-        if (user) {
-            setError('');
-            onLogin(user);
-        } else {
-            setError('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+        setLoading(true);
+        setError('');
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            
+            // For prototype compatibility, try to find if this user exists in mock data to attach profileId
+            const existingMockUser = MOCK_USERS.find(u => u.email === email);
+            
+            const userToLogin: MockUser = {
+                email: email,
+                role: existingMockUser ? existingMockUser.role : (userRole || 'jobSeeker'), // Fallback to selected role or jobSeeker
+                profileId: existingMockUser ? existingMockUser.profileId : null,
+                password: '***' // Password hidden
+            };
+
+            onLogin(userToLogin);
+        } catch (err: any) {
+            console.error(err);
+            if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+                setError('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+            } else {
+                setError('حدث خطأ أثناء تسجيل الدخول.');
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -59,7 +81,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate, onSocialLogin }) => 
                                 onChange={e => setEmail(e.target.value)} 
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-base" 
                                 required
-                                placeholder="google-seeker@test.com"
+                                placeholder="name@example.com"
                             />
                         </div>
                         
@@ -72,19 +94,21 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate, onSocialLogin }) => 
                                 onChange={e => setPassword(e.target.value)} 
                                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-base" 
                                 required 
-                                placeholder="password123"
+                                placeholder="••••••••"
                             />
                         </div>
                         
-                        <p className="text-sm text-center text-gray-500">
-                           حسابات تجريبية: <br />
-                           <span className="font-mono">google-seeker@test.com</span> <br/>
-                           <span className="font-mono">google-company@test.com</span> <br/>
-                           (كلمة المرور: <span className="font-mono">password123</span>)
-                        </p>
-
-                        <button type="submit" className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition text-lg">
-                            تسجيل الدخول
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition text-lg disabled:bg-indigo-400 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                            {loading ? (
+                                <svg className="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : 'تسجيل الدخول'}
                         </button>
 
                         <p className="text-center text-gray-600">

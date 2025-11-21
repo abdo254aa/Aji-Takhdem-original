@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, UserRole } from '../types';
 import SocialSignInButtons from './GoogleSignInButton';
+import { auth } from '../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface SignUpProps {
     onSignUp: (credentials: { email: string, role: UserRole }) => void;
@@ -14,8 +16,9 @@ const SignUp: React.FC<SignUpProps> = ({ onSignUp, onNavigate, userRole, onSocia
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!userRole) {
             setError('حدث خطأ. يرجى تحديد دورك (باحث عن عمل أو صاحب عمل) أولاً.');
@@ -30,8 +33,23 @@ const SignUp: React.FC<SignUpProps> = ({ onSignUp, onNavigate, userRole, onSocia
             return;
         }
         setError('');
+        setLoading(true);
         
-        onSignUp({ email, role: userRole });
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            onSignUp({ email, role: userRole });
+        } catch (err: any) {
+            console.error(err);
+            if (err.code === 'auth/email-already-in-use') {
+                setError('البريد الإلكتروني مستخدم بالفعل.');
+            } else if (err.code === 'auth/weak-password') {
+                setError('كلمة المرور ضعيفة جداً.');
+            } else {
+                setError('حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -93,8 +111,17 @@ const SignUp: React.FC<SignUpProps> = ({ onSignUp, onNavigate, userRole, onSocia
                             />
                         </div>
 
-                        <button type="submit" className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition text-lg">
-                            إنشاء حساب
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition text-lg disabled:bg-indigo-400 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                            {loading ? (
+                                <svg className="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : 'إنشاء حساب'}
                         </button>
 
                          <p className="text-center text-gray-600">

@@ -24,31 +24,21 @@
         font-family: 'Cairo', sans-serif;
       }
     </style>
-  <script src="https://accounts.google.com/gsi/client" async></script>
   <script type="importmap">
 {
   "imports": {
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js",
+    "firebase/analytics": "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/"
   }
 }
 </script>
 </head>
   <body>
-    <script>
-      function handleCredentialResponse(response) {
-        const event = new CustomEvent('google-signin-success', { detail: response });
-        window.dispatchEvent(event);
-      }
-    </script>
-    <div id="g_id_onload"
-         data-client_id="190212674081-b09lkcfs2usccimtbah73uek10ud6oke.apps.googleusercontent.com"
-         data-context="signin"
-         data-ux_mode="popup"
-         data-callback="handleCredentialResponse"
-         data-auto_prompt="false">
-    </div>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
