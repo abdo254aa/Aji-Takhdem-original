@@ -2,13 +2,19 @@ import React, { useEffect } from 'react';
 
 interface ToastProps {
   message: string;
-  type: 'success';
+  type: 'success' | 'error';
   onClose: () => void;
 }
 
 const SuccessIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
+const ErrorIcon: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
 );
 
@@ -35,6 +41,11 @@ const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
         bg: 'bg-green-50',
         border: 'border-green-200',
         icon: <SuccessIcon />,
+    },
+    error: {
+        bg: 'bg-red-50',
+        border: 'border-red-200',
+        icon: <ErrorIcon />,
     }
   };
 

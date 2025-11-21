@@ -43,7 +43,7 @@ const App: React.FC = () => {
   const [companyProfiles, setCompanyProfiles] = useState<CompanyProfile[]>(MOCK_COMPANY_PROFILES);
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null);
   const [blockedCompanies, setBlockedCompanies] = useState<string[]>([]);
-  const [toast, setToast] = useState<{ message: string; type: 'success' } | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_FULL_CONVERSATIONS);
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
   const [viewingProfileId, setViewingProfileId] = useState<{type: 'user' | 'company', id: number} | null>(null);
@@ -192,7 +192,7 @@ const App: React.FC = () => {
 
   const handleSocialLogin = async () => {
       if (!userRole) {
-        setToast({ message: 'الرجاء اختيار دورك أولاً (باحث عن عمل أو صاحب عمل).', type: 'success' });
+        setToast({ message: 'الرجاء اختيار دورك أولاً (باحث عن عمل أو صاحب عمل).', type: 'error' });
         return;
       }
 
@@ -205,7 +205,7 @@ const App: React.FC = () => {
 
         if (existingUser) {
              if (existingUser.role !== userRole) {
-                setToast({ message: `هذا الحساب مسجل كـ ${existingUser.role === 'jobSeeker' ? 'باحث عن عمل' : 'صاحب عمل'}. يرجى تسجيل الدخول من الخيار الصحيح.`, type: 'success'});
+                setToast({ message: `هذا الحساب مسجل كـ ${existingUser.role === 'jobSeeker' ? 'باحث عن عمل' : 'صاحب عمل'}. يرجى تسجيل الدخول من الخيار الصحيح.`, type: 'error'});
                 await signOut(auth); // Sign out if role mismatch
                 return;
             }
@@ -222,7 +222,11 @@ const App: React.FC = () => {
             // User just closed the popup, no need to show a scary error
             return;
         }
-        setToast({ message: 'حدث خطأ أثناء تسجيل الدخول بواسطة جوجل.', type: 'success' });
+        if (error.code === 'auth/unauthorized-domain') {
+            setToast({ message: 'نطاق الموقع غير مصرح به في إعدادات Firebase (Authorized Domains).', type: 'error' });
+            return;
+        }
+        setToast({ message: 'حدث خطأ أثناء تسجيل الدخول بواسطة جوجل.', type: 'error' });
       }
   };
 
