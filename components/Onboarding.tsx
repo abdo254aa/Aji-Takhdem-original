@@ -9,11 +9,20 @@ interface OnboardingProps {
 const ProgressBar: React.FC<{step: number, totalSteps: number}> = ({ step, totalSteps }) => {
     const progressPercentage = (step / totalSteps) * 100;
     return (
-        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-8">
-            <div className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }}></div>
+        <div className="w-full bg-slate-100 rounded-full h-2.5 mb-4 overflow-hidden">
+            <div 
+                className="bg-indigo-600 h-full rounded-full transition-all duration-700 ease-out shadow-lg shadow-indigo-200" 
+                style={{ width: `${progressPercentage}%` }}
+            ></div>
         </div>
     );
 };
+
+const CheckIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+);
 
 const Onboarding: React.FC<OnboardingProps> = ({ onOnboardingComplete }) => {
     const [step, setStep] = useState(1);
@@ -73,6 +82,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onOnboardingComplete }) => {
         setError('');
         if (step < TOTAL_STEPS) {
             setStep(step + 1);
+            window.scrollTo(0, 0);
         } else {
             handleSubmit();
         }
@@ -106,136 +116,193 @@ const Onboarding: React.FC<OnboardingProps> = ({ onOnboardingComplete }) => {
         switch (step) {
             case 1:
                 return (
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-2">لنبدأ ببناء ملفك الشخصي</h2>
-                        <p className="text-gray-600 mb-6">سيساعدنا هذا في العثور على الوظائف المناسبة لك.</p>
-                        <label htmlFor="name" className="block text-base font-medium text-gray-700 mb-1">ما هو اسمك؟</label>
-                        <input
-                            type="text"
-                            id="name"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-base"
-                            placeholder="مثال: كريم العلمي"
-                        />
+                    <div className="animate-fade-in">
+                        <h2 className="text-xl font-extrabold text-slate-800 mb-2">لنبدأ بالتعارف</h2>
+                        <p className="text-slate-500 mb-4 text-sm">ما هو الاسم الذي تود أن يظهر في ملفك الشخصي؟</p>
+                        <div className="relative">
+                            <label htmlFor="name" className="block text-xs font-bold text-slate-700 mb-1.5">الاسم الكامل</label>
+                            <input
+                                type="text"
+                                id="name"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                className="w-full p-2.5 border border-slate-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all duration-200 outline-none shadow-sm text-base"
+                                placeholder="مثال: كريم العلمي"
+                                autoFocus
+                            />
+                        </div>
                     </div>
                 );
             case 2:
                 return (
-                     <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">ما هو أعلى مستوى تعليمي لك؟</h2>
-                        <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
-                             {EDUCATION_LEVELS.map(level => (
-                                <label key={level} className="flex items-center space-x-reverse space-x-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-indigo-50 transition-colors">
-                                  <input
-                                    type="radio"
-                                    name="education"
-                                    value={level}
-                                    className="h-5 w-5 text-indigo-600 focus:ring-indigo-500"
-                                    checked={education === level}
-                                    onChange={() => setEducation(level)}
-                                  />
-                                  <span className="text-gray-700">{level}</span>
-                                </label>
-                              ))}
+                     <div className="animate-fade-in">
+                        <h2 className="text-xl font-extrabold text-slate-800 mb-4">المستوى الدراسي</h2>
+                        <div className="space-y-2 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+                             {EDUCATION_LEVELS.map(level => {
+                                const isSelected = education === level;
+                                return (
+                                    <label key={level} className={`flex items-center justify-between cursor-pointer p-2.5 rounded-xl border-2 transition-all duration-200 ${isSelected ? 'border-indigo-600 bg-indigo-50 shadow-sm' : 'border-transparent bg-slate-50 hover:bg-slate-100'}`}>
+                                        <div className="flex items-center space-x-reverse space-x-3">
+                                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-indigo-600' : 'border-slate-400'}`}>
+                                                {isSelected && <div className="w-2 h-2 rounded-full bg-indigo-600"></div>}
+                                            </div>
+                                            <span className={`font-semibold text-sm ${isSelected ? 'text-indigo-900' : 'text-slate-700'}`}>{level}</span>
+                                        </div>
+                                        <input
+                                            type="radio"
+                                            name="education"
+                                            value={level}
+                                            className="hidden"
+                                            checked={isSelected}
+                                            onChange={() => setEducation(level)}
+                                        />
+                                        {isSelected && <CheckIcon />}
+                                    </label>
+                                )
+                             })}
                         </div>
                     </div>
                 );
             case 3:
                  return (
-                     <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">ما هو مستوى خبرتك المهنية؟</h2>
-                        <div className="space-y-3">
-                             {EXPERIENCE_LEVELS.map(level => (
-                                <label key={level} className="flex items-center space-x-reverse space-x-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-indigo-50 transition-colors">
-                                  <input
-                                    type="radio"
-                                    name="experience"
-                                    value={level}
-                                    className="h-5 w-5 text-indigo-600 focus:ring-indigo-500"
-                                    checked={experienceLevel === level}
-                                    onChange={() => setExperienceLevel(level)}
-                                  />
-                                  <span className="text-gray-700">{level}</span>
-                                </label>
-                              ))}
+                     <div className="animate-fade-in">
+                        <h2 className="text-xl font-extrabold text-slate-800 mb-4">الخبرة المهنية</h2>
+                        <div className="space-y-2">
+                             {EXPERIENCE_LEVELS.map(level => {
+                                const isSelected = experienceLevel === level;
+                                return (
+                                    <label key={level} className={`flex items-center justify-between cursor-pointer p-2.5 rounded-xl border-2 transition-all duration-200 ${isSelected ? 'border-indigo-600 bg-indigo-50 shadow-sm' : 'border-transparent bg-slate-50 hover:bg-slate-100'}`}>
+                                        <div className="flex items-center space-x-reverse space-x-3">
+                                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-indigo-600' : 'border-slate-400'}`}>
+                                                {isSelected && <div className="w-2 h-2 rounded-full bg-indigo-600"></div>}
+                                            </div>
+                                            <span className={`font-semibold text-sm ${isSelected ? 'text-indigo-900' : 'text-slate-700'}`}>{level}</span>
+                                        </div>
+                                        <input
+                                            type="radio"
+                                            name="experience"
+                                            value={level}
+                                            className="hidden"
+                                            checked={isSelected}
+                                            onChange={() => setExperienceLevel(level)}
+                                        />
+                                        {isSelected && <CheckIcon />}
+                                    </label>
+                                )
+                             })}
                         </div>
                     </div>
                 );
             case 4:
                 return (
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">ما هي اللغات التي تتقنها؟</h2>
-                        <p className="text-gray-600 mb-6">حدد اللغات التي تجيدها لمساعدتنا في إيجاد الوظائف التي تتطلب مهاراتك اللغوية.</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {LANGUAGES.map(lang => (
-                                <label key={lang} className="flex items-center space-x-reverse space-x-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-indigo-50 transition-colors">
-                                    <input
-                                        type="checkbox"
-                                        checked={languages.includes(lang)}
-                                        onChange={() => handleLanguageCheckboxChange(lang)}
-                                        className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <span className="text-gray-700">{lang}</span>
-                                </label>
-                            ))}
+                    <div className="animate-fade-in">
+                        <h2 className="text-xl font-extrabold text-slate-800 mb-2">اللغات</h2>
+                        <p className="text-slate-500 mb-4 text-sm">حدد جميع اللغات التي تتقنها للتواصل.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            {LANGUAGES.map(lang => {
+                                const isSelected = languages.includes(lang);
+                                return (
+                                    <label key={lang} className={`flex items-center space-x-reverse space-x-3 cursor-pointer p-2.5 rounded-xl border-2 transition-all duration-200 ${isSelected ? 'border-indigo-600 bg-indigo-50 shadow-sm' : 'border-transparent bg-slate-50 hover:bg-slate-100'}`}>
+                                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 bg-white'}`}>
+                                            {isSelected && (
+                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="checkbox"
+                                            checked={isSelected}
+                                            onChange={() => handleLanguageCheckboxChange(lang)}
+                                            className="hidden"
+                                        />
+                                        <span className={`font-bold text-sm ${isSelected ? 'text-indigo-900' : 'text-slate-700'}`}>{lang}</span>
+                                    </label>
+                                )
+                            })}
                         </div>
                     </div>
                 );
             case 5:
                 return (
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">ما هي أبرز مهاراتك؟ (اختياري)</h2>
-                        <p className="text-gray-600 mb-6">أدخل المهارات التي تتقنها، مفصولة بفاصلة. مثال: HTML, CSS, JavaScript, إدارة المشاريع</p>
+                    <div className="animate-fade-in">
+                        <h2 className="text-xl font-extrabold text-slate-800 mb-2">المهارات (اختياري)</h2>
+                        <p className="text-slate-500 mb-4 text-sm">أضف مهاراتك لزيادة فرص ظهورك لأصحاب العمل.</p>
+                        <label htmlFor="skills" className="block text-xs font-bold text-slate-700 mb-1.5">المهارات (افصل بينها بفاصلة)</label>
                         <textarea
                             id="skills"
                             value={skills}
                             onChange={e => setSkills(e.target.value)}
-                            rows={5}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-base"
-                            placeholder="مثال: التواصل الفعال, حل المشكلات, Python, Photoshop..."
+                            rows={4}
+                            className="w-full p-2.5 border border-slate-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all duration-200 outline-none shadow-sm text-base leading-relaxed"
+                            placeholder="مثال: إدارة الوقت، التواصل، التسويق الرقمي، Photoshop..."
                         />
                     </div>
                 );
             case 6:
                 return (
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">ما هي مدينة إقامتك الحالية؟</h2>
-                        <label htmlFor="resident-city" className="block text-base font-medium text-gray-700 mb-1 sr-only">مدينة الإقامة</label>
-                        <select
-                            id="resident-city"
-                            value={residentCity}
-                            onChange={e => setResidentCity(e.target.value)}
-                            className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white text-base transition-colors ${!residentCity ? 'text-gray-500' : 'text-gray-900'}`}
-                        >
-                            <option value="" disabled>-- اختر مدينة إقامتك --</option>
-                            {MOROCCAN_CITIES.map(c => <option key={c} value={c} className="text-gray-900">{c}</option>)}
-                        </select>
+                    <div className="animate-fade-in">
+                        <h2 className="text-xl font-extrabold text-slate-800 mb-2">مدينة الإقامة</h2>
+                        <p className="text-slate-500 mb-4 text-sm">أين تقيم حالياً؟</p>
+                        <div className="relative">
+                            <select
+                                id="resident-city"
+                                value={residentCity}
+                                onChange={e => setResidentCity(e.target.value)}
+                                className={`w-full p-2.5 border border-slate-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 outline-none shadow-sm bg-white text-base appearance-none cursor-pointer transition-all ${!residentCity ? 'text-slate-400' : 'text-slate-900 font-medium'}`}
+                            >
+                                <option value="" disabled>-- اختر مدينتك --</option>
+                                {MOROCCAN_CITIES.map(c => <option key={c} value={c} className="text-slate-900">{c}</option>)}
+                            </select>
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 );
             case 7:
                 return (
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">في أي مدينة تفضل العمل؟</h2>
-                         <div className="space-y-3 mb-4">
-                            <label className="flex items-center space-x-reverse space-x-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-indigo-50 transition-colors">
-                                <input type="radio" name="city-type" value="all" checked={citySelectionType === 'all'} onChange={() => setCitySelectionType('all')} className="h-5 w-5 text-indigo-600 focus:ring-indigo-500"/>
-                                <span className="text-gray-700">كل المدن</span>
-                            </label>
-                            <label className="flex items-center space-x-reverse space-x-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-indigo-50 transition-colors">
-                                <input type="radio" name="city-type" value="specific" checked={citySelectionType === 'specific'} onChange={() => setCitySelectionType('specific')} className="h-5 w-5 text-indigo-600 focus:ring-indigo-500"/>
-                                <span className="text-gray-700">تحديد مدن معينة</span>
-                            </label>
+                    <div className="animate-fade-in">
+                        <h2 className="text-xl font-extrabold text-slate-800 mb-4">تفضيلات العمل</h2>
+                        
+                         <div className="space-y-2.5 mb-4">
+                            {[
+                                { value: 'all', label: 'كل المدن', desc: 'أنا مستعد للعمل في أي مدينة بالمغرب' },
+                                { value: 'specific', label: 'مدن محددة', desc: 'أريد تحديد المدن التي أبحث فيها' }
+                            ].map((option) => {
+                                const isSelected = citySelectionType === option.value;
+                                return (
+                                    <label key={option.value} className={`flex items-start space-x-reverse space-x-3 cursor-pointer p-3 rounded-xl border-2 transition-all duration-200 ${isSelected ? 'border-indigo-600 bg-indigo-50 shadow-md' : 'border-transparent bg-slate-50 hover:bg-slate-100'}`}>
+                                        <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isSelected ? 'border-indigo-600' : 'border-slate-400'}`}>
+                                            {isSelected && <div className="w-2 h-2 rounded-full bg-indigo-600"></div>}
+                                        </div>
+                                        <div>
+                                            <span className={`block text-sm font-bold ${isSelected ? 'text-indigo-900' : 'text-slate-800'}`}>{option.label}</span>
+                                            <span className="text-slate-500 text-xs">{option.desc}</span>
+                                        </div>
+                                        <input type="radio" name="city-type" value={option.value} checked={isSelected} onChange={() => setCitySelectionType(option.value as any)} className="hidden"/>
+                                    </label>
+                                )
+                            })}
                         </div>
 
                         {citySelectionType === 'specific' && (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-2 border rounded-lg">
-                                {MOROCCAN_CITIES.map(c => (
-                                    <label key={c} className="flex items-center space-x-reverse space-x-2 cursor-pointer p-2 rounded-md hover:bg-gray-100">
-                                        <input type="checkbox" checked={selectedCities.includes(c)} onChange={() => handleCityCheckboxChange(c)} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"/>
-                                        <span className="text-sm text-gray-700">{c}</span>
-                                    </label>
-                                ))}
+                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 animate-fade-in">
+                                <h3 className="text-slate-700 font-bold mb-2 text-sm">اختر المدن:</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[180px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {MOROCCAN_CITIES.map(c => {
+                                        const isSelected = selectedCities.includes(c);
+                                        return (
+                                            <label key={c} className={`flex items-center space-x-reverse space-x-2 cursor-pointer p-1.5 rounded-lg transition-colors ${isSelected ? 'bg-indigo-100 text-indigo-800' : 'hover:bg-slate-200 text-slate-600'}`}>
+                                                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-slate-400 bg-white'}`}>
+                                                    {isSelected && <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                                                </div>
+                                                <input type="checkbox" checked={isSelected} onChange={() => handleCityCheckboxChange(c)} className="hidden"/>
+                                                <span className="text-xs font-medium">{c}</span>
+                                            </label>
+                                        )
+                                    })}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -246,33 +313,99 @@ const Onboarding: React.FC<OnboardingProps> = ({ onOnboardingComplete }) => {
     };
 
     return (
-        <div className="bg-gray-50 py-10 flex items-center justify-center min-h-[calc(100vh-140px)]">
-            <div className="container mx-auto px-6 max-w-2xl">
-                <div className="bg-white p-8 rounded-lg shadow-md">
-                     <ProgressBar step={step} totalSteps={TOTAL_STEPS} />
-                     {error && <p className="bg-red-100 text-red-700 p-3 rounded-md mb-6 text-center">{error}</p>}
+        <div className="bg-slate-50 min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-6 px-4">
+            <div className="max-w-lg w-full mx-auto">
+                {/* Top Header */}
+                <div className="text-center mb-6 animate-fade-in-down">
+                    <h1 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2">
+                        مرحباً بك، لنبدأ رحلتك المهنية!
+                    </h1>
+                    <p className="text-sm text-slate-600">
+                        نحتاج بعض المعلومات البسيطة لكي نبحث لك عن الوظيفة الأنسب لطموحاتك.
+                    </p>
+                </div>
+
+                {/* Main Card */}
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 w-full">
+                    <div className="p-5 md:p-6">
+                         <div className="flex justify-between text-xs text-slate-400 font-semibold mb-2">
+                            <span>الخطوة {step} من {TOTAL_STEPS}</span>
+                            <span>{Math.round((step / TOTAL_STEPS) * 100)}%</span>
+                         </div>
+                         <ProgressBar step={step} totalSteps={TOTAL_STEPS} />
+                         
+                         {error && (
+                            <div className="bg-rose-50 border-r-4 border-rose-500 text-rose-700 p-2.5 rounded-lg mb-4 flex items-center animate-pulse text-xs font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {error}
+                            </div>
+                         )}
+                         
+                         <div className="min-h-[160px]">
+                            {renderStep()}
+                         </div>
+                    </div>
                      
-                     <div className="min-h-[380px]">
-                        {renderStep()}
-                     </div>
-                     
-                     <div className="mt-8 flex justify-between items-center">
-                        <button 
-                            onClick={prevStep}
-                            disabled={step === 1}
-                            className="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            السابق
-                        </button>
+                     {/* Footer / Buttons */}
+                     <div className="bg-slate-50 p-4 md:p-6 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-between items-center gap-6">
+                        {step > 1 ? (
+                            <button 
+                                onClick={prevStep}
+                                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border-2 border-slate-300 text-slate-600 font-bold hover:border-slate-400 hover:bg-slate-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-200 text-sm"
+                            >
+                                السابق
+                            </button>
+                        ) : (
+                            <div className="w-full sm:w-auto"></div> // Spacer
+                        )}
+                        
                         <button
                             onClick={nextStep}
-                            className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition"
+                            className="w-full sm:w-auto min-w-[120px] bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-slate-300 hover:bg-slate-800 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                         >
-                            {step === TOTAL_STEPS ? 'إنهاء واحصل على وظائف' : 'التالي'}
+                            <span>{step === TOTAL_STEPS ? 'إنهاء التسجيل' : 'التالي'}</span>
+                            {step !== TOTAL_STEPS && (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                            )}
                         </button>
                      </div>
                 </div>
             </div>
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: #f1f5f9;
+                    border-radius: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #cbd5e1;
+                    border-radius: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #94a3b8;
+                }
+                @keyframes fade-in-down {
+                    0% { opacity: 0; transform: translateY(-20px); }
+                    100% { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-down {
+                    animation: fade-in-down 0.6s ease-out forwards;
+                }
+                @keyframes fade-in {
+                    0% { opacity: 0; transform: translateY(10px); }
+                    100% { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in {
+                    animation: fade-in 0.4s ease-out forwards;
+                }
+            `}</style>
         </div>
     );
 };
