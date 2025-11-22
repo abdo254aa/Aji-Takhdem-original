@@ -1,3 +1,4 @@
+
 export interface Job {
   id: number;
   companyId: number; // New: To link job to a company profile
@@ -30,6 +31,7 @@ export enum View {
   Messages,
   CompanyProfilePage, // New
   UserProfilePage, // New
+  PrivacyPolicy, // New
 }
 
 export interface Filters {

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import type { Job } from '../types';
 
@@ -21,7 +22,7 @@ const FlagIcon: React.FC = () => (
 
 
 const LocationIcon: React.FC = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 text-red-500 dark:text-red-400" viewBox="0 0 20 20" fill="currentColor">
         <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
     </svg>
 );
@@ -92,9 +93,9 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails, onOpenReportModal
 
 
   const cardClasses = {
-      high: 'border-amber-200 bg-amber-50/40',
-      medium: 'border-gray-100 bg-white',
-      normal: 'border-gray-100 bg-white',
+      high: 'border-amber-200 bg-amber-50/40 dark:bg-amber-900/10 dark:border-amber-800/50',
+      medium: 'border-gray-100 bg-white dark:bg-slate-800 dark:border-slate-700',
+      normal: 'border-gray-100 bg-white dark:bg-slate-800 dark:border-slate-700',
   };
 
   const isNew = new Date(job.postedDate) > new Date(new Date().setDate(new Date().getDate() - 7));
@@ -103,27 +104,27 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails, onOpenReportModal
     <div className={`p-6 rounded-2xl shadow-sm hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border flex flex-col justify-between relative ${cardClasses[importance]}`}>
       {importance === 'high' && (
          <div className="absolute top-4 left-12">
-             <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-md">مميزة</span>
+             <span className="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300 text-xs font-bold px-2 py-1 rounded-md">مميزة</span>
         </div>
       )}
       
       <div ref={menuRef} className="absolute top-4 left-4">
             <button 
                 onClick={(e) => { e.stopPropagation(); setMenuOpen(!menuOpen); }}
-                className="text-gray-400 hover:text-gray-600 p-1 rounded-full focus:outline-none transition-colors"
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-full focus:outline-none transition-colors"
                 aria-label="خيارات الوظيفة"
             >
                 <KebabMenuIcon />
             </button>
             {menuOpen && (
-                <div className="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-lg z-10 border border-gray-100 overflow-hidden">
+                <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-700 rounded-xl shadow-lg z-10 border border-gray-100 dark:border-slate-600 overflow-hidden">
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
                             onOpenReportModal(job);
                             setMenuOpen(false);
                         }}
-                        className="w-full text-right px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center transition-colors"
+                        className="w-full text-right px-4 py-3 text-sm text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center transition-colors"
                     >
                         <FlagIcon />
                         <span>الإبلاغ عن الإعلان</span>
@@ -135,47 +136,47 @@ const JobCard: React.FC<JobCardProps> = ({ job, onViewDetails, onOpenReportModal
       <div className="mb-4">
         <div className="flex justify-between items-start mb-3">
              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-extrabold text-gray-800 line-clamp-1" title={job.title}>{job.title}</h3>
+                <h3 className="text-xl font-extrabold text-gray-800 dark:text-white line-clamp-1" title={job.title}>{job.title}</h3>
                  {isNew && (
-                    <span className="bg-blue-100 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full">جديد</span>
+                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full">جديد</span>
                 )}
              </div>
         </div>
         
-        <div className="flex items-center text-gray-600 mb-4">
-             <div className="bg-indigo-50 p-1.5 rounded-lg text-indigo-600 ml-3">
+        <div className="flex items-center text-gray-600 dark:text-slate-300 mb-4">
+             <div className="bg-indigo-50 dark:bg-indigo-900/50 p-1.5 rounded-lg text-indigo-600 dark:text-indigo-400 ml-3">
                 <CompanyIcon />
              </div>
             <span className="font-bold text-sm">{job.company}</span>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
-            <div className="flex items-center bg-gray-50 text-gray-600 px-3 py-1 rounded-full text-xs font-medium border border-gray-100">
+            <div className="flex items-center bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-slate-200 px-3 py-1 rounded-full text-xs font-medium border border-gray-100 dark:border-slate-600">
                 <LocationIcon />
                 <span>{job.city}</span>
             </div>
             {job.experience && (
-                <div className="flex items-center bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-xs font-medium border border-teal-100">
+                <div className="flex items-center bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-200 px-3 py-1 rounded-full text-xs font-medium border border-teal-100 dark:border-teal-800">
                     <ExperienceIcon />
                     <span>{job.experience}</span>
                 </div>
             )}
              {job.educationLevel && (
-                <div className="flex items-center bg-sky-50 text-sky-700 px-3 py-1 rounded-full text-xs font-medium border border-sky-100">
+                <div className="flex items-center bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-200 px-3 py-1 rounded-full text-xs font-medium border border-sky-100 dark:border-sky-800">
                     <EducationIcon />
                     <span>{job.educationLevel}</span>
                 </div>
             )}
         </div>
 
-        <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed">{job.description}</p>
+        <p className="text-gray-500 dark:text-slate-300 text-sm line-clamp-2 leading-relaxed">{job.description}</p>
       </div>
       
-      <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
-         <span className="text-xs text-gray-400">{job.postedDate}</span>
+      <div className="mt-auto pt-4 border-t border-gray-50 dark:border-slate-700 flex justify-between items-center">
+         <span className="text-xs text-gray-400 dark:text-slate-400">{job.postedDate}</span>
         <button 
             onClick={() => onViewDetails(job)}
-            className="text-indigo-600 hover:text-indigo-800 font-bold text-sm flex items-center gap-1 transition-colors group"
+            className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-bold text-sm flex items-center gap-1 transition-colors group"
         >
             <span>عرض التفاصيل</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transform group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">

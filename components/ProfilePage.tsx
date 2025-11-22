@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import type { UserProfile } from '../types';
 
@@ -64,12 +65,12 @@ const ProfileDetailRow: React.FC<{
     iconBgColor: string;
     iconTextColor: string;
 }> = ({ icon, label, value, iconBgColor, iconTextColor }) => (
-    <div className="flex items-start p-4 bg-gray-50/70 rounded-lg border border-gray-200">
+    <div className="flex items-start p-4 bg-gray-50/70 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-slate-600">
         <div className={`flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full ${iconBgColor} ${iconTextColor}`}>
             {icon}
         </div>
         <div className="mr-4 flex-1">
-            <p className="text-sm font-medium text-gray-500">{label}</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-slate-300">{label}</p>
             <div className="mt-1">{value}</div>
         </div>
     </div>
@@ -86,9 +87,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
 
     if (!userProfile) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 bg-gray-50 min-h-[calc(100vh-140px)]">
-                <h2 className="text-2xl font-bold text-gray-700">لم يتم العثور على الملف الشخصي.</h2>
-                <p className="text-gray-500 mt-2">قد تحتاج إلى تسجيل الدخول أو إكمال عملية الإعداد أولاً.</p>
+            <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-slate-900 min-h-[calc(100vh-140px)]">
+                <h2 className="text-2xl font-bold text-gray-700 dark:text-slate-300">لم يتم العثور على الملف الشخصي.</h2>
+                <p className="text-gray-500 dark:text-slate-400 mt-2">قد تحتاج إلى تسجيل الدخول أو إكمال عملية الإعداد أولاً.</p>
             </div>
         );
     }
@@ -111,9 +112,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
     const placeholderImageUrl = `https://picsum.photos/seed/${encodeURIComponent(name)}/128/128`;
 
     return (
-        <div className="bg-gray-50 py-12">
+        <div className="bg-gray-50 dark:bg-slate-900 py-12 transition-colors duration-300">
             <div className="container mx-auto px-6 max-w-4xl">
-                <div className="bg-white p-4 md:p-8 rounded-lg shadow-md">
+                <div className="bg-white dark:bg-slate-800 p-4 md:p-8 rounded-lg shadow-md border border-gray-100 dark:border-slate-700 transition-colors duration-300">
                     <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-right">
                         <div className="flex-shrink-0 mb-4 md:mb-0 md:ml-8 flex flex-col items-center">
                             <input
@@ -124,12 +125,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
                                 className="hidden"
                                 accept="image/png, image/jpeg"
                             />
-                            <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-white shadow-md overflow-hidden" aria-label="الصورة الشخصية الحالية">
+                            <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center border-4 border-white dark:border-slate-600 shadow-md overflow-hidden" aria-label="الصورة الشخصية الحالية">
                                 <img src={profilePicture || placeholderImageUrl} alt={name} className="h-full w-full object-cover" />
                             </div>
                             <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="mt-4 flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="mt-4 flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
                                 <span>{profilePicture ? 'تغيير الصورة' : 'إضافة صورة'}</span>
                                 <CameraIcon className="h-5 w-5 ml-2 -mr-1" />
@@ -138,8 +139,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
 
                         <div className="flex-grow flex flex-col md:flex-row md:justify-between w-full items-center md:items-start">
                             <div>
-                                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">{name}</h1>
-                                <div className="flex items-center justify-center md:justify-start text-lg text-gray-500 mt-2">
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 dark:text-white">{name}</h1>
+                                <div className="flex items-center justify-center md:justify-start text-lg text-gray-500 dark:text-slate-400 mt-2">
                                     <LocationIcon />
                                     <span>يقيم في <strong>{residentCity}</strong></span>
                                 </div>
@@ -147,7 +148,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
                             <div className="mt-4 md:mt-0 flex-shrink-0">
                                 <button 
                                     onClick={() => alert('ميزة تعديل الملف الشخصي قيد التطوير!')}
-                                    className="bg-indigo-100 text-indigo-700 px-5 py-2.5 rounded-lg hover:bg-indigo-200 transition duration-300 font-bold text-base flex items-center"
+                                    className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-5 py-2.5 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-900/60 transition duration-300 font-bold text-base flex items-center"
                                 >
                                     <EditIcon />
                                     <span>تعديل</span>
@@ -156,29 +157,29 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
                         </div>
                     </div>
 
-                    <div className="mt-8 pt-8 border-t">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">ملخص الملف الشخصي</h2>
+                    <div className="mt-8 pt-8 border-t border-gray-200 dark:border-slate-700">
+                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">ملخص الملف الشخصي</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <ProfileDetailRow 
                                 icon={<EducationIcon />} 
                                 label="المستوى التعليمي" 
-                                value={<p className="text-base font-semibold text-gray-800">{education}</p>} 
-                                iconBgColor="bg-sky-100" 
-                                iconTextColor="text-sky-600" 
+                                value={<p className="text-base font-semibold text-gray-800 dark:text-white">{education}</p>} 
+                                iconBgColor="bg-sky-100 dark:bg-sky-900/30" 
+                                iconTextColor="text-sky-600 dark:text-sky-400" 
                             />
                             <ProfileDetailRow 
                                 icon={<ExperienceIcon />} 
                                 label="مستوى الخبرة" 
-                                value={<p className="text-base font-semibold text-gray-800">{experienceLevel}</p>} 
-                                iconBgColor="bg-teal-100" 
-                                iconTextColor="text-teal-600" 
+                                value={<p className="text-base font-semibold text-gray-800 dark:text-white">{experienceLevel}</p>} 
+                                iconBgColor="bg-teal-100 dark:bg-teal-900/30" 
+                                iconTextColor="text-teal-600 dark:text-teal-400" 
                             />
                             <ProfileDetailRow 
                                 icon={<LanguageIcon />} 
                                 label="اللغات" 
-                                value={<p className="text-base font-semibold text-gray-800">{languages.length > 0 ? languages.join('، ') : 'لم تحدد'}</p>} 
-                                iconBgColor="bg-purple-100" 
-                                iconTextColor="text-purple-600" 
+                                value={<p className="text-base font-semibold text-gray-800 dark:text-white">{languages.length > 0 ? languages.join('، ') : 'لم تحدد'}</p>} 
+                                iconBgColor="bg-purple-100 dark:bg-purple-900/30" 
+                                iconTextColor="text-purple-600 dark:text-purple-400" 
                             />
                             <ProfileDetailRow 
                                 icon={<GlobeIcon />} 
@@ -187,48 +188,48 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userProfile, onUpdateProfile 
                                     cities && cities.length > 0 ? (
                                         <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                                             {cities.map(city => (
-                                                <span key={city} className="bg-rose-100 text-rose-800 text-sm font-medium px-2.5 py-1 rounded-full">
+                                                <span key={city} className="bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-300 text-sm font-medium px-2.5 py-1 rounded-full">
                                                     {city}
                                                 </span>
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-base font-semibold text-gray-800">كل المدن</p>
+                                        <p className="text-base font-semibold text-gray-800 dark:text-white">كل المدن</p>
                                     )
                                 } 
-                                iconBgColor="bg-rose-100" 
-                                iconTextColor="text-rose-600" 
+                                iconBgColor="bg-rose-100 dark:bg-rose-900/30" 
+                                iconTextColor="text-rose-600 dark:text-rose-400" 
                             />
                         </div>
                     </div>
 
-                    <div className="mt-8 pt-8 border-t">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">المهارات</h2>
+                    <div className="mt-8 pt-8 border-t border-gray-200 dark:border-slate-700">
+                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">المهارات</h2>
                         {skills && skills.length > 0 ? (
                             <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                                 {skills.map((skill, index) => (
-                                    <span key={index} className="bg-indigo-100 text-indigo-800 text-base font-medium ml-2 mb-2 px-4 py-1.5 rounded-full">
+                                    <span key={index} className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 text-base font-medium ml-2 mb-2 px-4 py-1.5 rounded-full">
                                         {skill}
                                     </span>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-8 px-4 bg-gray-50 rounded-lg">
-                                <p className="text-gray-600">لم تتم إضافة أي مهارات بعد.</p>
+                            <div className="text-center py-8 px-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
+                                <p className="text-gray-600 dark:text-slate-400">لم تتم إضافة أي مهارات بعد.</p>
                             </div>
                         )}
                     </div>
 
-                    <div className="mt-8 pt-8 border-t">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">السيرة الذاتية</h2>
-                        <div className="bg-gray-50/70 p-6 rounded-lg border border-gray-200 text-center">
-                            <p className="text-gray-600 mb-6 max-w-xl mx-auto">
+                    <div className="mt-8 pt-8 border-t border-gray-200 dark:border-slate-700">
+                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">السيرة الذاتية</h2>
+                        <div className="bg-gray-50/70 dark:bg-slate-700/50 p-6 rounded-lg border border-gray-200 dark:border-slate-600 text-center">
+                            <p className="text-gray-600 dark:text-slate-300 mb-6 max-w-xl mx-auto">
                                 لديك خياران: يمكنك تحميل سيرتك الذاتية الجاهزة، أو دع الذكاء الاصطناعي يساعدك في إنشاء واحدة احترافية.
                             </p>
                             <div className="flex flex-col sm:flex-row justify-center gap-4">
                                 <button 
                                     onClick={() => alert('ميزة تحميل السيرة الذاتية قيد التطوير!')}
-                                    className="bg-white border border-indigo-300 text-indigo-700 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition duration-300 flex items-center justify-center text-lg shadow-sm"
+                                    className="bg-white dark:bg-slate-800 border border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition duration-300 flex items-center justify-center text-lg shadow-sm"
                                 >
                                     <UploadIcon />
                                     <span>تحميل السيرة الذاتية</span>

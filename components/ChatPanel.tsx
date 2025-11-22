@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import type { Conversation, Message } from '../types';
 
@@ -45,7 +46,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ conversation, onSendMessage, onBa
     const attachmentRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
     }
 
     useEffect(() => {
@@ -75,12 +76,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ conversation, onSendMessage, onBa
     
     if (!conversation) {
         return (
-            <div className="hidden md:flex flex-grow flex-col items-center justify-center h-full bg-gray-50 text-center">
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+            <div className="hidden md:flex flex-grow flex-col items-center justify-center h-full bg-gray-50 dark:bg-slate-900 text-center transition-colors duration-300">
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 mx-auto text-gray-300 dark:text-slate-700 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-                <h2 className="text-xl font-bold text-gray-700 mt-4">ابدأ محادثة</h2>
-                <p className="text-gray-500 mt-1">اختر محادثة من القائمة لعرض الرسائل.</p>
+                <h2 className="text-2xl font-bold text-gray-700 dark:text-slate-200">ابدأ محادثة</h2>
+                <p className="text-gray-500 dark:text-slate-400 mt-2">اختر محادثة من القائمة لعرض الرسائل.</p>
             </div>
         );
     }
@@ -88,48 +89,58 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ conversation, onSendMessage, onBa
     const myLastSentMessageId = [...conversation.messages].reverse().find(m => m.sender === 'me')?.id;
 
     return (
-        <>
+        <div className="flex flex-col h-full relative bg-[#efeae2] dark:bg-slate-900 transition-colors duration-300">
+            {/* Background Pattern Overlay (Light Mode Only) */}
+            <div className="absolute inset-0 opacity-5 pointer-events-none dark:hidden" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            }}></div>
+
             {/* Header */}
-            <div className="flex items-center p-4 border-b bg-white flex-shrink-0">
+            <div className="flex items-center px-4 py-3 border-b dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm z-10 flex-shrink-0 h-16 transition-colors duration-300">
                 <button 
                     onClick={onBack} 
-                    className="md:hidden text-gray-500 hover:text-gray-800 ml-3"
+                    className="md:hidden text-gray-500 dark:text-slate-300 hover:text-gray-800 dark:hover:text-white ml-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700"
                     aria-label="العودة إلى قائمة الرسائل"
                 >
                     <BackArrowIcon />
                 </button>
-                <img src={conversation.avatarUrl} alt={conversation.name} className="h-11 w-11 rounded-full object-cover"/>
-                <div className="mr-3">
-                    <h2 
-                        onClick={() => onViewProfile(conversation.participantId, conversation.participantType)}
-                        className="text-lg font-bold text-gray-800 cursor-pointer hover:underline"
-                    >
-                        {conversation.name}
-                    </h2>
-                    {conversation.onlineStatus === 'online' ? (
-                        <p className="text-xs text-green-600 font-semibold">نشط الآن</p>
-                    ) : (
-                        <p className="text-xs text-gray-500">غير متصل</p>
-                    )}
+                <div className="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-1 rounded-lg transition" onClick={() => onViewProfile(conversation.participantId, conversation.participantType)}>
+                    <img src={conversation.avatarUrl} alt={conversation.name} className="h-10 w-10 rounded-full object-cover border border-gray-200 dark:border-slate-600"/>
+                    <div className="mr-3">
+                        <h2 className="text-base font-bold text-gray-900 dark:text-white leading-none">
+                            {conversation.name}
+                        </h2>
+                        {conversation.onlineStatus === 'online' ? (
+                            <p className="text-xs text-green-600 dark:text-green-400 font-semibold mt-1">نشط الآن</p>
+                        ) : (
+                            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">غير متصل</p>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Messages */}
-            <div className="flex-grow p-4 sm:p-6 overflow-y-auto bg-gray-50">
-                <div className="space-y-1">
+            {/* Messages Area */}
+            <div className="flex-grow p-4 overflow-y-auto z-0 custom-scrollbar scroll-smooth">
+                <div className="space-y-2 pb-2">
                     {conversation.messages.map(msg => {
                         const isReadReceiptVisible = msg.id === myLastSentMessageId && conversation.lastReadMessageId && msg.id <= conversation.lastReadMessageId;
+                        const isMe = msg.sender === 'me';
                         return (
-                            <div key={msg.id} className="flex flex-col">
-                                <div className={`flex items-end ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl shadow-sm ${msg.sender === 'me' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-800 border'}`}>
-                                        <p className="text-base">{msg.text}</p>
-                                        <p className={`text-xs mt-1 ${msg.sender === 'me' ? 'text-indigo-200' : 'text-gray-500'} text-left`}>{msg.timestamp}</p>
+                            <div key={msg.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                                <div 
+                                    className={`max-w-[80%] lg:max-w-[70%] px-4 py-2 rounded-2xl shadow-sm relative text-base leading-relaxed
+                                    ${isMe 
+                                        ? 'bg-indigo-600 text-white rounded-br-none' 
+                                        : 'bg-white dark:bg-slate-700 text-gray-800 dark:text-white rounded-bl-none border border-gray-100 dark:border-slate-600'}`}
+                                >
+                                    <p>{msg.text}</p>
+                                    <div className={`text-[10px] mt-1 flex items-center justify-end ${isMe ? 'text-indigo-200' : 'text-gray-400 dark:text-slate-300'}`}>
+                                        {msg.timestamp}
                                     </div>
                                 </div>
                                 {isReadReceiptVisible && (
-                                    <div className="flex justify-end mt-1 pr-2">
-                                         <img src={conversation.avatarUrl} alt="Read by" className="h-4 w-4 rounded-full object-cover" title={`شوهدت من طرف ${conversation.name}`} />
+                                    <div className="flex justify-end mt-1 pr-1 animate-fade-in">
+                                         <img src={conversation.avatarUrl} alt="Read" className="h-3.5 w-3.5 rounded-full object-cover border border-white" title={`شوهدت`} />
                                     </div>
                                 )}
                             </div>
@@ -139,42 +150,50 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ conversation, onSendMessage, onBa
                 </div>
             </div>
 
-            {/* Input */}
-            <div className="p-4 bg-white border-t flex-shrink-0">
-                <form onSubmit={handleSend} className="flex items-center space-x-reverse space-x-2">
-                    <div className="relative" ref={attachmentRef}>
+            {/* Sticky Input Area */}
+            <div className="p-3 bg-white dark:bg-slate-800 border-t dark:border-slate-700 flex-shrink-0 z-10 transition-colors duration-300">
+                <form onSubmit={handleSend} className="flex items-end space-x-reverse space-x-2 max-w-4xl mx-auto">
+                    <div className="relative pb-1" ref={attachmentRef}>
                         <button
                             type="button"
                             onClick={() => setShowAttachmentOptions(!showAttachmentOptions)}
-                            className="p-3 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 transition"
+                            className="p-2 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition"
                             aria-label="إرفاق ملف"
                         >
                             <PlusIcon className="h-6 w-6" />
                         </button>
                         {showAttachmentOptions && (
-                             <div className="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-md shadow-lg border z-10 py-1">
-                                <button type="button" onClick={() => {alert('إرسال صورة'); setShowAttachmentOptions(false);}} className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors">
+                             <div className="absolute bottom-full right-0 mb-3 w-48 bg-white dark:bg-slate-700 rounded-xl shadow-xl border border-gray-100 dark:border-slate-600 z-20 py-2 overflow-hidden animate-fade-in-up">
+                                <button type="button" onClick={() => {alert('إرسال صورة'); setShowAttachmentOptions(false);}} className="w-full text-right px-4 py-2.5 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600 flex items-center transition-colors">
                                     <ImageIcon />
                                     <span>إرسال صورة</span>
                                 </button>
-                                <button type="button" onClick={() => {alert('إرسال مستند'); setShowAttachmentOptions(false);}} className="w-full text-right px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors">
+                                <button type="button" onClick={() => {alert('إرسال مستند'); setShowAttachmentOptions(false);}} className="w-full text-right px-4 py-2.5 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600 flex items-center transition-colors">
                                     <DocumentIcon />
                                     <span>إرسال مستند</span>
                                 </button>
                              </div>
                         )}
                     </div>
-                    <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="اكتب رسالتك هنا..."
-                        className="w-full p-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-base"
-                        autoComplete="off"
-                    />
+                    <div className="flex-grow bg-gray-100 dark:bg-slate-700 rounded-2xl flex items-center px-4 py-2 border border-transparent focus-within:border-indigo-300 dark:focus-within:border-indigo-500 focus-within:bg-white dark:focus-within:bg-slate-900 transition-colors">
+                        <textarea
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSend(e);
+                                }
+                            }}
+                            placeholder="اكتب رسالتك هنا..."
+                            className="w-full bg-transparent border-none focus:ring-0 text-base resize-none max-h-32 py-1 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400"
+                            rows={1}
+                            style={{minHeight: '24px'}}
+                        />
+                    </div>
                     <button
                         type="submit"
-                        className="bg-indigo-600 text-white rounded-full p-3 hover:bg-indigo-700 transition duration-200 flex-shrink-0 disabled:bg-indigo-300 disabled:cursor-not-allowed"
+                        className="bg-indigo-600 text-white rounded-full p-3 hover:bg-indigo-700 transition duration-200 flex-shrink-0 shadow-md transform active:scale-95 disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:shadow-none"
                         disabled={!newMessage.trim()}
                         aria-label="إرسال الرسالة"
                     >
@@ -182,7 +201,29 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ conversation, onSendMessage, onBa
                     </button>
                 </form>
             </div>
-        </>
+             <style>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 5px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background-color: #cbd5e1;
+                    border-radius: 20px;
+                }
+                .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background-color: #475569;
+                }
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up {
+                    animation: fadeInUp 0.2s ease-out forwards;
+                }
+            `}</style>
+        </div>
     );
 };
 

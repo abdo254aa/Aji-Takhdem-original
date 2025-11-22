@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { View } from '../types';
 
@@ -19,6 +20,9 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </button>
             <button onClick={() => onNavigate(View.Contact)} className="hover:text-white transition-colors duration-200 font-medium text-base">
                 اتصل بنا
+            </button>
+            <button onClick={() => onNavigate(View.PrivacyPolicy)} className="hover:text-white transition-colors duration-200 font-medium text-base">
+                سياسة الخصوصية
             </button>
         </div>
         <p className="text-sm text-slate-600">&copy; {currentYear} جميع الحقوق محفوظة.</p>

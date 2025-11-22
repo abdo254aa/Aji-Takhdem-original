@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -23,6 +24,9 @@ import MessagesPage from './components/MessagesPage';
 import Toast from './components/Toast';
 import CompanyProfilePage from './components/CompanyProfilePage';
 import UserProfileView from './components/UserProfileView';
+import PrivacyPolicyPage from './components/PrivacyPolicyPage';
+import MessagingWidget from './components/MessagingWidget';
+import NotificationsWidget from './components/NotificationsWidget'; // Import Notifications Widget
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
@@ -47,6 +51,30 @@ const App: React.FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_FULL_CONVERSATIONS);
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
   const [viewingProfileId, setViewingProfileId] = useState<{type: 'user' | 'company', id: number} | null>(null);
+  
+  // Dark Mode State
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('darkMode');
+        return saved === 'true' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return false;
+  });
+
+  const toggleDarkMode = () => {
+      setIsDarkMode(prev => !prev);
+  };
+
+  // Apply Dark Mode
+  useEffect(() => {
+    if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('darkMode', 'true');
+    } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('darkMode', 'false');
+    }
+  }, [isDarkMode]);
 
   const isProfileComplete = (userRole === 'jobSeeker' && !!userProfile) || (userRole === 'employer' && !!companyProfile);
 
@@ -384,6 +412,7 @@ const App: React.FC = () => {
       case View.Services: return <ServicesPage />;
       case View.About: return <AboutPage />;
       case View.Contact: return <ContactPage />;
+      case View.PrivacyPolicy: return <PrivacyPolicyPage />;
       case View.AuthChoice: return <AuthChoice onNavigate={onNavigate} userRole={userRole} onSelectRole={setUserRole} onSocialLogin={handleSocialLogin} />;
       case View.Login: return <Login onLogin={handleLogin} onNavigate={onNavigate} onSocialLogin={handleSocialLogin} userRole={userRole} />;
       case View.SignUp: return <SignUp onSignUp={(creds) => handleSignUp(creds)} onNavigate={onNavigate} userRole={userRole} onSocialLogin={handleSocialLogin} />;
@@ -428,7 +457,7 @@ const App: React.FC = () => {
   const unreadMessagesCount = conversations.reduce((sum, conv) => sum + conv.unread, 0);
 
   return (
-    <div className="bg-gray-50 min-h-screen flex flex-col">
+    <div className="bg-gray-50 dark:bg-slate-900 min-h-screen flex flex-col transition-colors duration-300">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <Header 
         currentView={currentView} 
@@ -439,6 +468,10 @@ const App: React.FC = () => {
         isProfileComplete={isProfileComplete}
         unreadMessagesCount={unreadMessagesCount}
         onLogout={handleLogout}
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        conversations={conversations}
+        onSelectConversation={handleSelectConversation}
       />
       <main className="flex-grow">
         {renderContent()}
@@ -462,6 +495,18 @@ const App: React.FC = () => {
         onApply={handleApplyFilters}
         currentFilters={filters}
       />
+      
+      {/* Floating Widgets - Only show when authenticated */}
+      {isAuthenticated && isProfileComplete && (
+        <>
+             {/* Messaging Widget (Bottom Right, shifted up) */}
+             {currentView !== View.Messages && (
+                <MessagingWidget />
+             )}
+             {/* Notifications Widget (Bottom Right, bottom most) */}
+             <NotificationsWidget />
+        </>
+      )}
     </div>
   );
 };

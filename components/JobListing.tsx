@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useEffect } from 'react';
 import type { Job, Filters } from '../types';
 import JobCard from './JobCard';
@@ -16,7 +17,7 @@ const LocationIcon: React.FC<{className?: string}> = ({className}) => (
 );
 
 const BellIcon: React.FC = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-indigo-200 dark:text-indigo-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
     </svg>
 );
@@ -104,18 +105,18 @@ const JobListing: React.FC<JobListingProps> = ({ jobs, initialCities, initialSea
     const resultsTitle = useMemo(() => {
         const getCityText = () => {
             if (!initialCities || initialCities.length === 0) return "كل المدن";
-            if (initialCities.length === 1) return <span className="text-indigo-600">{initialCities[0]}</span>;
-            if (initialCities.length <= 3) return <span className="text-indigo-600">{initialCities.join('، ')}</span>;
-            return <span className="text-indigo-600">{`${initialCities.length} مدن مختارة`}</span>;
+            if (initialCities.length === 1) return <span className="text-indigo-600 dark:text-indigo-400">{initialCities[0]}</span>;
+            if (initialCities.length <= 3) return <span className="text-indigo-600 dark:text-indigo-400">{initialCities.join('، ')}</span>;
+            return <span className="text-indigo-600 dark:text-indigo-400">{`${initialCities.length} مدن مختارة`}</span>;
         };
         
         const cityText = getCityText();
 
         if (initialSearchTerm && initialCities && initialCities.length > 0) {
-            return <>نتائج البحث عن <span className="text-gray-800 font-bold">"{initialSearchTerm}"</span> في {cityText}</>;
+            return <>نتائج البحث عن <span className="text-gray-800 dark:text-white font-bold">"{initialSearchTerm}"</span> في {cityText}</>;
         }
         if (initialSearchTerm) {
-            return <>نتائج البحث عن <span className="text-gray-800 font-bold">"{initialSearchTerm}"</span> في كل المدن</>;
+            return <>نتائج البحث عن <span className="text-gray-800 dark:text-white font-bold">"{initialSearchTerm}"</span> في كل المدن</>;
         }
         if (initialCities && initialCities.length > 0) {
             return <>الوظائف المتاحة في {cityText}</>;
@@ -137,12 +138,12 @@ const JobListing: React.FC<JobListingProps> = ({ jobs, initialCities, initialSea
     }, [jobs, filteredJobs.length, blockedCompanies]);
     
     return (
-        <div className="bg-gray-50 min-h-screen">
-            <div className="bg-white border-b border-gray-200 py-8 shadow-sm sticky top-[60px] z-30">
+        <div className="bg-gray-50 dark:bg-slate-900 min-h-screen transition-colors duration-300">
+            <div className="bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-800 py-8 shadow-sm sticky top-[60px] z-30 transition-colors duration-300">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-center gap-3 max-w-5xl mx-auto">
                         <div className="relative w-full md:flex-1 group">
-                             <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600">
+                             <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400">
                                 <SearchIcon />
                             </div>
                             <input
@@ -150,7 +151,7 @@ const JobListing: React.FC<JobListingProps> = ({ jobs, initialCities, initialSea
                                 placeholder="عنوان الوظيفة، شركة..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full h-12 p-3 pr-11 text-base bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 outline-none"
+                                className="w-full h-12 p-3 pr-11 text-base bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white dark:placeholder-slate-400 focus:border-transparent transition-all duration-200 outline-none"
                                 aria-label="البحث عن وظيفة"
                             />
                         </div>
@@ -161,12 +162,12 @@ const JobListing: React.FC<JobListingProps> = ({ jobs, initialCities, initialSea
                             <select
                                 value={city}
                                 onChange={(e) => setCity(e.target.value)}
-                                className="w-full h-12 py-3 pl-10 pr-11 text-base font-semibold text-gray-700 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 outline-none appearance-none cursor-pointer"
+                                className="w-full h-12 py-3 pl-10 pr-11 text-base font-semibold text-gray-700 dark:text-white bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 outline-none appearance-none cursor-pointer"
                                 aria-label="اختر مدينة"
                             >
-                                <option value="all">كل المدن</option>
+                                <option value="all" className="dark:bg-slate-800 text-gray-700 dark:text-slate-200">كل المدن</option>
                                 {MOROCCAN_CITIES.map((c) => (
-                                    <option key={c} value={c}>{c}</option>
+                                    <option key={c} value={c} className="dark:bg-slate-800 text-gray-700 dark:text-slate-200">{c}</option>
                                 ))}
                             </select>
                         </div>
@@ -174,12 +175,12 @@ const JobListing: React.FC<JobListingProps> = ({ jobs, initialCities, initialSea
                              <button
                                 type="button"
                                 onClick={onOpenFilterModal}
-                                className="flex-1 md:w-auto h-12 px-4 rounded-xl font-semibold text-base bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-indigo-600 transition duration-300 flex items-center justify-center relative"
+                                className="flex-1 md:w-auto h-12 px-4 rounded-xl font-semibold text-base bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-300 flex items-center justify-center relative"
                             >
                                 <FilterIcon className="h-5 w-5 ml-2"/>
                                 <span>تصفية</span>
                                 {activeFilterCount > 0 && (
-                                    <span className="absolute -top-2 -left-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold border-2 border-white">
+                                    <span className="absolute -top-2 -left-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold border-2 border-white dark:border-slate-900">
                                         {activeFilterCount}
                                     </span>
                                 )}
@@ -196,9 +197,9 @@ const JobListing: React.FC<JobListingProps> = ({ jobs, initialCities, initialSea
             </div>
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="mb-8 flex flex-col sm:flex-row justify-between items-baseline border-b border-gray-200 pb-4">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-800">{resultsTitle}</h2>
-                    <span className="text-sm font-medium bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full mt-2 sm:mt-0">{filteredJobs.length} وظيفة</span>
+                <div className="mb-8 flex flex-col sm:flex-row justify-between items-baseline border-b border-gray-200 dark:border-slate-800 pb-4">
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">{resultsTitle}</h2>
+                    <span className="text-sm font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full mt-2 sm:mt-0">{filteredJobs.length} وظيفة</span>
                 </div>
 
                 {filteredJobs.length > 0 ? (
@@ -208,14 +209,14 @@ const JobListing: React.FC<JobListingProps> = ({ jobs, initialCities, initialSea
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 px-6 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
+                    <div className="text-center py-20 px-6 bg-white dark:bg-slate-950 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 max-w-2xl mx-auto">
                         <BellIcon />
-                        <h3 className="mt-6 text-xl font-bold text-gray-800">{noResultsMessage}</h3>
-                        <p className="mt-2 text-gray-500 max-w-md mx-auto">جرب استخدام كلمات مفتاحية مختلفة أو إزالة بعض الفلاتر لتوسيع نطاق بحثك.</p>
+                        <h3 className="mt-6 text-xl font-bold text-gray-800 dark:text-white">{noResultsMessage}</h3>
+                        <p className="mt-2 text-gray-500 dark:text-slate-400 max-w-md mx-auto">جرب استخدام كلمات مفتاحية مختلفة أو إزالة بعض الفلاتر لتوسيع نطاق بحثك.</p>
                         
                         {suggestedJobs.length > 0 && (
                             <div className="mt-12 text-right">
-                                <h4 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">وظائف قد تهمك</h4>
+                                <h4 className="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b dark:border-slate-800 pb-2">وظائف قد تهمك</h4>
                                 <div className="grid grid-cols-1 gap-4">
                                     {suggestedJobs.map(job => (
                                         <JobCard key={job.id} job={job} onViewDetails={onViewDetails} onOpenReportModal={onOpenReportModal} />
