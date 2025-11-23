@@ -17,6 +17,20 @@ interface Comment {
     date: string;
 }
 
+// Mock Images for variety in the sidebar
+const SIDEBAR_IMAGES = [
+    "https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Office
+    "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Meeting
+    "https://images.unsplash.com/photo-1568992687947-868a62a9f521?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Desk
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Building
+    "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Papers
+    "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Handshake
+    "https://images.unsplash.com/photo-1526304640152-d4619684e484?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Calculator/Money
+    "https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80", // Abstract
+];
+
+const getRandomImage = (id: number) => SIDEBAR_IMAGES[id % SIDEBAR_IMAGES.length];
+
 const PlusIcon: React.FC = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
         <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -36,13 +50,13 @@ const BuildingLibraryIcon: React.FC = () => (
 );
 
 const SearchIcon: React.FC<{className?: string}> = ({className}) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className || "h-6 w-6"} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <svg xmlns="http://www.w3.org/2000/svg" className={className || "h-5 w-5"} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
 );
 
 const BackArrowIcon: React.FC = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
     </svg>
 );
@@ -154,12 +168,11 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
             .slice(5, 11); 
 
         return (
-            <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-2 transition-colors duration-300">
-                {/* Full width container with minimal padding */}
-                <div className="container mx-auto px-2 max-w-[99%]">
+            <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-8 transition-colors duration-300">
+                <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl">
                     
                     {/* Header: Back Button & Title Card */}
-                    <div className="mb-4">
+                    <div className="mb-8">
                         <button 
                             onClick={handleBack} 
                             className="flex items-center text-indigo-600 dark:text-indigo-400 font-bold mb-3 hover:underline transition-all text-sm"
@@ -168,17 +181,17 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                             <span className="mr-2">العودة للقائمة</span>
                         </button>
                         
-                        <div className="relative w-full h-56 md:h-72 rounded-xl overflow-hidden shadow-md">
+                        <div className="relative w-full h-48 md:h-64 rounded-xl overflow-hidden shadow-md">
                             <img 
                                 src={selectedArticle.image || 'https://via.placeholder.com/1200x400'} 
                                 alt={selectedArticle.title} 
                                 className="w-full h-full object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-6 md:p-8">
-                                <span className="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full w-fit mb-2">
+                                <span className="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full w-fit mb-2 shadow-sm">
                                     {selectedArticle.department}
                                 </span>
-                                <h1 className="text-xl md:text-3xl font-extrabold text-white leading-tight mb-2">
+                                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight mb-2">
                                     {selectedArticle.title}
                                 </h1>
                                 <div className="flex items-center text-slate-300 text-xs md:text-sm gap-4">
@@ -188,36 +201,39 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                         </div>
                     </div>
 
-                    {/* Main Layout Grid - Tight gap */}
-                    <div className="flex flex-col lg:flex-row gap-3">
+                    {/* Main Layout Grid */}
+                    <div className="flex flex-col lg:flex-row gap-8">
                         
-                        {/* Sidebar (Right Side in RTL) - Compact Width */}
-                        <div className="w-full lg:w-[25%] space-y-4 order-1">
+                        {/* Sidebar (Right Side in RTL) */}
+                        <div className="w-full lg:w-1/3 space-y-6 order-1">
                             
-                            {/* 1. Latest Updates (Larger Design) - Count: 5 */}
-                            <div className="bg-white dark:bg-slate-800 p-2 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                <h3 className="font-bold text-slate-800 dark:text-white mb-2 pb-1 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-sm px-1">
-                                    <span className="w-1 h-3 bg-indigo-500 rounded-full"></span>
+                            {/* 1. Latest Updates */}
+                            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                                <h3 className="font-bold text-slate-800 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-base">
+                                    <span className="w-1 h-4 bg-indigo-500 rounded-full"></span>
                                     آخر المستجدات
                                 </h3>
-                                <div className="space-y-1">
-                                    {latestUpdatesList.map(job => (
+                                <div className="space-y-4">
+                                    {latestUpdatesList.map((job, idx) => (
                                         <div 
                                             key={job.id} 
                                             onClick={() => handleArticleClick(job)}
-                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-lg transition-colors flex items-start gap-3 border-b border-gray-100 last:border-0 dark:border-gray-700/50"
+                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-lg transition-colors flex items-start gap-3"
                                         >
-                                            {/* Image: Larger Rectangular Banner Style */}
-                                            <div className="w-[120px] h-[75px] flex-shrink-0 bg-white rounded-md border border-gray-200 dark:border-gray-600 overflow-hidden relative shadow-sm">
-                                                <img src={job.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="" />
+                                            {/* Mock Image thumbnail */}
+                                            <div className="w-20 h-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
+                                                <img 
+                                                    src={getRandomImage(idx)} 
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                                                    alt="" 
+                                                />
                                             </div>
                                             
-                                            {/* Text Section: Flexible Height */}
-                                            <div className="flex-1 min-w-0 flex flex-col h-[75px]">
-                                                <h4 className="text-xs font-bold text-slate-800 dark:text-white leading-snug group-hover:text-indigo-600 transition-colors line-clamp-3 mb-auto">
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-semibold text-slate-800 dark:text-white leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2">
                                                     {job.title}
                                                 </h4>
-                                                <span className="text-[10px] text-slate-400 mt-1 block flex-shrink-0">{job.publishDate}</span>
+                                                <span className="text-[10px] text-slate-400 mt-1 block">{job.publishDate}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -225,50 +241,53 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                             </div>
 
                             {/* 2. Newsletter */}
-                            <div className="bg-gradient-to-br from-slate-900 to-indigo-900 p-4 rounded-xl text-white shadow-lg relative overflow-hidden">
+                            <div className="bg-gradient-to-br from-slate-800 to-indigo-900 p-5 rounded-xl text-white shadow-lg relative overflow-hidden">
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-2 mb-2">
                                         <EmailIcon />
                                         <h3 className="font-bold text-sm">النشرة البريدية</h3>
                                     </div>
-                                    <p className="text-indigo-100 text-[10px] mb-3 leading-tight">توصل بآخر المباريات وعروض العمل الحكومية.</p>
+                                    <p className="text-indigo-100 text-xs mb-3 leading-relaxed">توصل بآخر المباريات وعروض العمل الحكومية فور نشرها.</p>
                                     <div className="flex flex-col gap-2">
                                         <input 
                                             type="email" 
                                             placeholder="البريد الإلكتروني" 
-                                            className="w-full p-2 rounded-md text-slate-900 text-xs focus:ring-1 focus:ring-indigo-400 outline-none border-none"
+                                            className="w-full p-2.5 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-indigo-400 outline-none border-none"
                                         />
-                                        <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-md transition shadow-md text-xs">
-                                            اشترك
+                                        <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-lg transition shadow-md text-sm">
+                                            اشترك الآن
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* 3. Featured Offers (Larger Design) - Count: 6 */}
-                            <div className="bg-white dark:bg-slate-800 p-2 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                <h3 className="font-bold text-slate-800 dark:text-white mb-2 pb-1 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-sm px-1">
-                                    <span className="w-1 h-3 bg-amber-500 rounded-full"></span>
+                            {/* 3. Featured Offers */}
+                            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                                <h3 className="font-bold text-slate-800 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-base">
+                                    <span className="w-1 h-4 bg-amber-500 rounded-full"></span>
                                     عروض مميزة
                                 </h3>
-                                <div className="space-y-1">
-                                    {featuredOffersList.map(job => (
+                                <div className="space-y-4">
+                                    {featuredOffersList.map((job, idx) => (
                                          <div 
                                             key={job.id} 
                                             onClick={() => handleArticleClick(job)}
-                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-lg transition-colors flex items-start gap-3 border-b border-gray-100 last:border-0 dark:border-gray-700/50"
+                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-lg transition-colors flex items-start gap-3"
                                         >
-                                            {/* Image: Larger Rectangular Banner Style */}
-                                            <div className="w-[120px] h-[75px] flex-shrink-0 bg-white rounded-md border border-gray-200 dark:border-gray-600 overflow-hidden relative shadow-sm">
-                                                <img src={job.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="" />
+                                            {/* Mock Image thumbnail */}
+                                            <div className="w-20 h-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
+                                                <img 
+                                                    src={getRandomImage(idx + 5)} 
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                                                    alt="" 
+                                                />
                                             </div>
                                             
-                                            {/* Text Section: Flexible Height */}
-                                            <div className="flex-1 min-w-0 flex flex-col h-[75px]">
-                                                <h4 className="text-xs font-bold text-slate-800 dark:text-white leading-snug group-hover:text-indigo-600 transition-colors line-clamp-3 mb-auto">
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-semibold text-slate-800 dark:text-white leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2">
                                                     {job.title}
                                                 </h4>
-                                                <span className="text-[10px] text-slate-400 mt-1 block flex-shrink-0">{job.publishDate}</span>
+                                                <span className="text-[10px] text-slate-400 mt-1 block">{job.publishDate}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -277,21 +296,36 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
 
                         </div>
 
-                        {/* Main Content (Left Side in RTL) - Expands to fill space */}
-                        <div className="flex-1 space-y-4 order-2">
+                        {/* Main Content (Left Side in RTL) */}
+                        <div className="flex-1 space-y-6 order-2">
                             {/* Article Text */}
                             <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-slate-800 dark:text-slate-200">
-                                <h3 className="text-2xl font-bold mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
-                                    تفاصيل المباراة
-                                </h3>
-                                {/* Using whitespace-pre-line to respect newlines in mock data */}
-                                <div className="prose dark:prose-invert max-w-none leading-loose text-base whitespace-pre-line">
+                                <div className="flex justify-between items-start mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
+                                    <div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-1">
+                                            تفاصيل المباراة
+                                        </h3>
+                                        <span className="text-sm text-slate-500 dark:text-slate-400">جميع التفاصيل المتعلقة بهذا الإعلان</span>
+                                    </div>
+                                    <button 
+                                        className="hidden sm:block text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition"
+                                        onClick={() => window.print()}
+                                    >
+                                        طباعة الإعلان
+                                    </button>
+                                </div>
+                                
+                                {/* Content */}
+                                <div className="prose dark:prose-invert max-w-none leading-loose text-base whitespace-pre-line text-slate-700 dark:text-slate-300">
                                     {selectedArticle.content}
                                 </div>
                                 
-                                <div className="mt-8 p-6 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-100 dark:border-slate-600">
-                                    <h4 className="font-bold text-lg mb-3 text-slate-900 dark:text-white">الوثائق المطلوبة للترشيح:</h4>
-                                    <ul className="list-disc list-inside space-y-2 text-base">
+                                <div className="mt-8 p-6 bg-slate-50 dark:bg-slate-700/30 rounded-lg border border-slate-200 dark:border-slate-600">
+                                    <h4 className="font-bold text-lg mb-3 text-slate-900 dark:text-white flex items-center gap-2">
+                                        <BuildingLibraryIcon />
+                                        الوثائق المطلوبة للترشيح:
+                                    </h4>
+                                    <ul className="list-disc list-inside space-y-2 text-base text-slate-700 dark:text-slate-300">
                                         <li>طلب خطي يحمل اسم وعنوان وهاتف المترشح.</li>
                                         <li>نسخة مصادق عليها من بطاقة التعريف الوطنية.</li>
                                         <li>نسخة مصادق عليها من الدبلوم أو الشهادة المطلوبة.</li>
@@ -304,7 +338,7 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                             {/* Comments Section */}
                             <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
                                 <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-3">
-                                    التعليقات <span className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm px-2.5 py-0.5 rounded-full">{comments.length}</span>
+                                    التعليقات <span className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm px-3 py-0.5 rounded-full">{comments.length}</span>
                                 </h3>
                                 
                                 <div className="space-y-6 mb-8">
@@ -334,7 +368,7 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                                                 value={newComment}
                                                 onChange={(e) => setNewComment(e.target.value)}
                                                 placeholder="أضف تعليقاً..."
-                                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 min-h-[80px] focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none text-slate-800 dark:text-white text-sm pr-12"
+                                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 min-h-[50px] focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none text-slate-800 dark:text-white text-sm pr-12"
                                             ></textarea>
                                             <button 
                                                 type="submit"
@@ -357,17 +391,17 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
     // ---- LIST VIEW (DEFAULT) ----
     return (
         <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-10 transition-colors duration-300">
-            <div className="container mx-auto px-4 max-w-6xl">
+            <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                        <h1 className="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight">مباريات الدولة</h1>
-                        <p className="text-lg text-slate-600 dark:text-slate-300 mt-2 font-medium">بوابة الوظائف الحكومية والمباريات العمومية بالمغرب</p>
+                        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight">مباريات الدولة</h1>
+                        <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 mt-2 font-medium">بوابة الوظائف الحكومية والمباريات العمومية بالمغرب</p>
                     </div>
                     {isAdmin && (
                         <button
                             onClick={() => setIsFormOpen(!isFormOpen)}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center gap-2 border border-emerald-500"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center gap-2 border border-emerald-500 text-sm"
                         >
                             <PlusIcon />
                             <span>نشر مباراة</span>
@@ -379,7 +413,7 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                     {/* Main Content (Articles List) */}
                     <div className="w-full lg:w-3/4">
                         {/* Search Bar */}
-                        <div className="relative mb-8">
+                        <div className="relative mb-6">
                              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
                                 <SearchIcon />
                             </div>
@@ -388,7 +422,7 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                                 placeholder="ابحث عن مباراة، وزارة، أو قطاع..." 
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full h-14 pr-12 pl-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-medium focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 focus:border-indigo-500 outline-none transition-all shadow-sm"
+                                className="w-full h-12 pr-12 pl-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white font-medium focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/30 focus:border-indigo-500 outline-none transition-all shadow-sm"
                             />
                         </div>
 
@@ -399,21 +433,21 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                                 <form onSubmit={handleSubmit} className="space-y-5">
                                     <div>
                                         <label className="block text-base font-semibold text-slate-700 dark:text-slate-200 mb-2">عنوان المباراة</label>
-                                        <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors" />
+                                        <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full p-3 border border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors" />
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         <div>
                                             <label className="block text-base font-semibold text-slate-700 dark:text-slate-200 mb-2">الجهة / الوزارة</label>
-                                            <input type="text" required value={department} onChange={e => setDepartment(e.target.value)} className="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors" />
+                                            <input type="text" required value={department} onChange={e => setDepartment(e.target.value)} className="w-full p-3 border border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors" />
                                         </div>
                                     </div>
                                     <div>
                                         <label className="block text-base font-semibold text-slate-700 dark:text-slate-200 mb-2">رابط الصورة (اختياري)</label>
-                                        <input type="url" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors" placeholder="https://..." />
+                                        <input type="url" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full p-3 border border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors" placeholder="https://..." />
                                     </div>
                                     <div>
                                         <label className="block text-base font-semibold text-slate-700 dark:text-slate-200 mb-2">التفاصيل والشروط</label>
-                                        <textarea required rows={5} value={content} onChange={e => setContent(e.target.value)} className="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors"></textarea>
+                                        <textarea required rows={5} value={content} onChange={e => setContent(e.target.value)} className="w-full p-3 border border-slate-200 rounded-xl focus:border-emerald-500 outline-none dark:bg-slate-700 dark:border-slate-600 dark:text-white font-medium transition-colors"></textarea>
                                     </div>
                                     <div className="flex justify-end gap-3 pt-4">
                                         <button type="button" onClick={() => setIsFormOpen(false)} className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">إلغاء</button>
@@ -423,45 +457,43 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
                             </div>
                         )}
 
-                        <div className="space-y-6">
+                        <div className="grid gap-4">
                             {filteredConcours.length > 0 ? (
                                 filteredConcours.map(article => (
                                     <div 
                                         key={article.id} 
                                         onClick={() => handleArticleClick(article)}
-                                        className="group bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-700 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+                                        className="group bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 transition-all duration-300 cursor-pointer"
                                     >
-                                        <div className="flex flex-col md:flex-row gap-6">
-                                            {/* Image Section */}
-                                            <div className="w-full md:w-32 h-32 flex-shrink-0 bg-slate-50 dark:bg-slate-700/50 rounded-xl flex items-center justify-center p-2 border border-slate-100 dark:border-slate-600 overflow-hidden">
+                                        <div className="flex flex-col md:flex-row gap-5">
+                                            {/* Image Section - Sized down */}
+                                            <div className="w-full md:w-28 h-28 flex-shrink-0 bg-slate-50 dark:bg-slate-700/50 rounded-lg flex items-center justify-center p-2 border border-slate-100 dark:border-slate-600 overflow-hidden">
                                                 <img src={article.image || 'https://via.placeholder.com/150'} alt={article.department} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
                                             </div>
                                             
                                             {/* Content Section */}
                                             <div className="flex-grow flex flex-col">
-                                                <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
-                                                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-600">
+                                                <div className="flex flex-wrap justify-between items-start gap-2 mb-1">
+                                                    <div className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold border border-slate-200 dark:border-slate-600">
                                                         <BuildingLibraryIcon />
                                                         <span className="mr-2">{article.department}</span>
                                                     </div>
+                                                    <span className="text-[10px] text-slate-400 font-medium">{article.publishDate}</span>
                                                 </div>
                                                 
-                                                <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-tight">
+                                                <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug">
                                                     {article.title}
                                                 </h2>
                                                 
-                                                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed line-clamp-2 mb-4">
+                                                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed line-clamp-2 mb-3">
                                                     {article.content}
                                                 </p>
                                                 
-                                                <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                    <div className="flex flex-wrap items-center gap-3">
-                                                        <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300 px-3 py-2 rounded-lg border border-emerald-100 dark:border-emerald-800/50">
-                                                            <span className="text-xs font-medium opacity-80">نشر:</span>
-                                                            <span className="text-lg font-extrabold tracking-tight">{article.publishDate}</span>
-                                                        </div>
-                                                    </div>
-                                                    <span className="text-indigo-600 dark:text-indigo-400 text-sm font-bold group-hover:underline">عرض التفاصيل ←</span>
+                                                <div className="mt-auto flex items-center justify-end">
+                                                    <span className="text-indigo-600 dark:text-indigo-400 text-xs font-bold group-hover:underline flex items-center gap-1">
+                                                        عرض التفاصيل 
+                                                        <svg className="w-3 h-3 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -478,30 +510,39 @@ const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, onAddCo
 
                     {/* Sidebar */}
                     <div className="w-full lg:w-1/4 space-y-6">
-                        {/* 1. Latest Updates (Restored) */}
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 className="font-bold text-slate-800 dark:text-white mb-5 pb-3 border-b border-slate-100 dark:border-slate-700 text-lg flex items-center gap-2">
-                                <span className="w-1.5 h-6 bg-rose-500 rounded-full"></span>
+                        {/* 1. Latest Updates */}
+                        <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 className="font-bold text-slate-800 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-700 text-base flex items-center gap-2">
+                                <span className="w-1 h-4 bg-rose-500 rounded-full"></span>
                                 آخر المستجدات
                             </h3>
-                            <ul className="space-y-4">
-                                {latestUpdates.map((update) => (
-                                    <li key={update.id} className="group cursor-pointer" onClick={() => handleArticleClick(update)}>
-                                        <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 transition-colors leading-snug mb-1">
-                                            {update.title}
-                                        </h4>
-                                        <span className="text-[10px] text-slate-400 bg-slate-50 dark:bg-slate-700 px-2 py-0.5 rounded-full inline-block">
-                                            {update.publishDate}
-                                        </span>
+                            <ul className="space-y-3">
+                                {latestUpdates.map((update, idx) => (
+                                    <li 
+                                        key={update.id} 
+                                        className="group cursor-pointer flex items-start gap-3" 
+                                        onClick={() => handleArticleClick(update)}
+                                    >
+                                        <div className="w-16 h-12 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden border border-gray-100 dark:border-slate-600">
+                                            <img src={getRandomImage(idx)} className="w-full h-full object-cover" alt="" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
+                                                {update.title}
+                                            </h4>
+                                            <span className="text-[10px] text-slate-400 mt-0.5 block">
+                                                {update.publishDate}
+                                            </span>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
                          {/* 2. Categories */}
-                        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 className="font-bold text-slate-800 dark:text-white mb-5 pb-3 border-b border-slate-100 dark:border-slate-700 text-lg">تصنيفات شائعة</h3>
-                            <ul className="space-y-3">
+                        <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+                            <h3 className="font-bold text-slate-800 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-700 text-base">تصنيفات شائعة</h3>
+                            <ul className="space-y-2">
                                 {[
                                     { name: "قطاع التعليم", color: "bg-blue-500" },
                                     { name: "الأمن والشرطة", color: "bg-green-500" },
