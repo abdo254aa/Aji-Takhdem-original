@@ -4,7 +4,7 @@ import { MOROCCAN_CITIES, COMPANY_SIZES } from '../constants';
 import type { CompanyProfile } from '../types';
 
 interface CompanyProfileSetupProps {
-    onProfileComplete: (profile: CompanyProfile) => void;
+    onProfileComplete: (profile: Omit<CompanyProfile, 'id'>) => void;
 }
 
 const UploadIcon: React.FC = () => (

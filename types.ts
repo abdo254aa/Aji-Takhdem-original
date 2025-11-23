@@ -29,9 +29,10 @@ export enum View {
   SignUp,
   Profile,
   Messages,
-  CompanyProfilePage, // New
-  UserProfilePage, // New
-  PrivacyPolicy, // New
+  CompanyProfilePage,
+  UserProfilePage,
+  PrivacyPolicy,
+  Concours, // New
 }
 
 export interface Filters {
@@ -58,7 +59,7 @@ export interface UserProfile {
     skills: string[];
 }
 
-export type UserRole = 'jobSeeker' | 'employer' | null;
+export type UserRole = 'jobSeeker' | 'employer' | 'admin' | null; // Updated
 
 export interface CompanyProfile {
   id: number; // New
@@ -94,7 +95,7 @@ export interface Conversation {
 export interface MockUser {
   email: string;
   password?: string; // Optional for social logins
-  role: 'jobSeeker' | 'employer';
+  role: 'jobSeeker' | 'employer' | 'admin'; // Updated
   profileId: number | null; // null if profile is not yet created
 }
 
@@ -102,4 +103,15 @@ export interface MockGoogleAccount {
   name: string;
   email: string;
   avatarUrl: string;
+}
+
+export interface ConcoursArticle {
+    id: number;
+    title: string;
+    department: string; // e.g. Ministry of Education
+    deadline: string;
+    publishDate: string;
+    content: string; // HTML or Markdown content
+    image?: string;
+    link?: string; // External link to official source
 }

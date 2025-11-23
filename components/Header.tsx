@@ -120,6 +120,13 @@ const SunIcon: React.FC<{ className?: string }> = ({ className = "h-5 w-5" }) =>
   </svg>
 );
 
+const FlagIcon: React.FC<{ className?: string }> = ({ className = "h-5 w-5" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 21v-8a2 2 0 01-2-2H5a2 2 0 012-2h6a2 2 0 012 2v2m2 4h6a2 2 0 012 2v2m-2 4h6a2 2 0 012-2v-2" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 21V7a2 2 0 012-2h6a2 2 0 012 2v2" />
+    </svg>
+);
+
 
 const Header: React.FC<HeaderProps> = ({ currentView, onNavigate, userRole, isAuthenticated, hasJobSeekerProfile, isProfileComplete, unreadMessagesCount, onLogout, isDarkMode, toggleDarkMode, conversations, onSelectConversation }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -161,7 +168,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onNavigate, userRole, isAu
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div 
             className="text-2xl sm:text-3xl font-extrabold cursor-pointer flex items-center gap-1"
-            onClick={() => onNavigate(isAuthenticated && isProfileComplete ? View.JobBoard : View.Home)}
+            onClick={() => onNavigate(isAuthenticated && isProfileComplete && userRole !== 'admin' ? View.JobBoard : View.Home)}
         >
           <span className="text-amber-500">أجي</span>
           <span className="text-white">تخدم</span>
@@ -169,12 +176,13 @@ const Header: React.FC<HeaderProps> = ({ currentView, onNavigate, userRole, isAu
         
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-reverse space-x-1">
-            {!isProfileComplete && (
-                <NavLink view={View.Home} currentView={currentView} onNavigate={onNavigate}>
-                    الرئيسية
-                </NavLink>
-            )}
-            {isAuthenticated && isProfileComplete && (
+            <NavLink view={View.Home} currentView={currentView} onNavigate={onNavigate}>
+                الرئيسية
+            </NavLink>
+             <NavLink view={View.Concours} currentView={currentView} onNavigate={onNavigate}>
+                مباريات الدولة
+            </NavLink>
+            {isAuthenticated && isProfileComplete && userRole !== 'admin' && (
                 <NavLink view={View.JobBoard} currentView={currentView} onNavigate={onNavigate}>
                     الوظائف
                 </NavLink>
@@ -199,7 +207,12 @@ const Header: React.FC<HeaderProps> = ({ currentView, onNavigate, userRole, isAu
 
             {isAuthenticated ? (
                 <>
-                    {isProfileComplete && (
+                    {userRole === 'admin' && (
+                        <div className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse ml-2">
+                             حساب المدير
+                        </div>
+                    )}
+                    {isProfileComplete && userRole !== 'admin' && (
                         <div className="relative" ref={messageDropdownRef}>
                              <button 
                                 onClick={() => setIsMessageDropdownOpen(!isMessageDropdownOpen)}
@@ -312,7 +325,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onNavigate, userRole, isAu
                 </div>
             </button>
 
-            {isAuthenticated && isProfileComplete && (
+            {isAuthenticated && isProfileComplete && userRole !== 'admin' && (
                 <>
                     <button
                         onClick={() => onNavigate(View.JobBoard)}
@@ -358,15 +371,19 @@ const Header: React.FC<HeaderProps> = ({ currentView, onNavigate, userRole, isAu
       {isMobileMenuOpen && (
         <div className="md:hidden bg-slate-900 dark:bg-slate-950 border-t border-slate-800 shadow-lg absolute w-full left-0 top-full" id="mobile-menu">
             <div className="px-4 pt-4 pb-6 space-y-2">
-                {!isAuthenticated && (
-                    <MobileNavLink view={View.Home} currentView={currentView} onNavigate={() => handleMobileNav(View.Home)}>
+                 <MobileNavLink view={View.Home} currentView={currentView} onNavigate={() => handleMobileNav(View.Home)}>
                         <span className="flex items-center justify-end gap-2">
                             <span>الرئيسية</span>
                             <HomeIcon />
                         </span>
-                    </MobileNavLink>
-                )}
-                {isAuthenticated && isProfileComplete && (
+                </MobileNavLink>
+                 <MobileNavLink view={View.Concours} currentView={currentView} onNavigate={() => handleMobileNav(View.Concours)}>
+                        <span className="flex items-center justify-end gap-2">
+                            <span>مباريات الدولة</span>
+                            <FlagIcon />
+                        </span>
+                </MobileNavLink>
+                {isAuthenticated && isProfileComplete && userRole !== 'admin' && (
                      <MobileNavLink view={View.JobBoard} currentView={currentView} onNavigate={() => handleMobileNav(View.JobBoard)}>
                         <span className="flex items-center justify-end gap-2">
                             <span>الوظائف</span>

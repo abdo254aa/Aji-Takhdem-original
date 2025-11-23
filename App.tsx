@@ -9,8 +9,8 @@ import FilterModal from './components/FilterModal';
 import ReportModal from './components/ReportModal';
 import Onboarding from './components/Onboarding';
 import { View } from './types';
-import type { Job, City, Filters, UserProfile, UserRole, CompanyProfile, Conversation, Message, MockUser, MockGoogleAccount } from './types';
-import { INITIAL_JOBS, MOCK_FULL_CONVERSATIONS, MOCK_COMPANY_PROFILES, MOCK_USER_PROFILES, MOCK_USERS, MOCK_GOOGLE_ACCOUNTS } from './constants';
+import type { Job, City, Filters, UserProfile, UserRole, CompanyProfile, Conversation, Message, MockUser, MockGoogleAccount, ConcoursArticle } from './types';
+import { INITIAL_JOBS, MOCK_FULL_CONVERSATIONS, MOCK_COMPANY_PROFILES, MOCK_USER_PROFILES, MOCK_USERS, MOCK_GOOGLE_ACCOUNTS, MOCK_CONCOURS } from './constants';
 import HomePage from './components/HomePage';
 import ServicesPage from './components/ServicesPage';
 import AboutPage from './components/AboutPage';
@@ -26,7 +26,8 @@ import CompanyProfilePage from './components/CompanyProfilePage';
 import UserProfileView from './components/UserProfileView';
 import PrivacyPolicyPage from './components/PrivacyPolicyPage';
 import MessagingWidget from './components/MessagingWidget';
-import NotificationsWidget from './components/NotificationsWidget'; // Import Notifications Widget
+import NotificationsWidget from './components/NotificationsWidget';
+import ConcoursPage from './components/ConcoursPage'; // Import ConcoursPage
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
@@ -51,6 +52,7 @@ const App: React.FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>(MOCK_FULL_CONVERSATIONS);
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
   const [viewingProfileId, setViewingProfileId] = useState<{type: 'user' | 'company', id: number} | null>(null);
+  const [concours, setConcours] = useState<ConcoursArticle[]>(MOCK_CONCOURS); // Concours State
   
   // Dark Mode State
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -76,21 +78,18 @@ const App: React.FC = () => {
     }
   }, [isDarkMode]);
 
-  const isProfileComplete = (userRole === 'jobSeeker' && !!userProfile) || (userRole === 'employer' && !!companyProfile);
+  const isProfileComplete = (userRole === 'jobSeeker' && !!userProfile) || (userRole === 'employer' && !!companyProfile) || (userRole === 'admin');
 
   // Listen for Firebase Auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsAuthenticated(true);
-        // If userRole is already set (e.g., from sign up flow), good.
-        // If not, we might be reloading. In this prototype, we fallback to 'jobSeeker' if not set,
-        // or check if email exists in MOCK_USERS to recover role.
         if (!userRole) {
              const mockUser = MOCK_USERS.find(u => u.email === user.email);
              if (mockUser) {
                  setUserRole(mockUser.role);
-                 handleLogin(mockUser); // Re-hydrate profile state
+                 handleLogin(mockUser);
              }
         }
       } else {
@@ -105,13 +104,13 @@ const App: React.FC = () => {
 
 
   const onNavigate = (view: View) => {
-    // Reset role if navigating to AuthChoice while not authenticated to allow re-selection
     if (view === View.AuthChoice && !isAuthenticated) {
         setUserRole(null);
     }
 
-    // Prevent access to protected views if not authenticated
+    // Protected views
     const protectedViews = [View.JobBoard, View.Profile, View.Messages, View.PostJobForm];
+    // Admin can access job board but shouldn't be forced to create profile
     if (protectedViews.includes(view) && !isAuthenticated) {
         setUserRole(null);
         setCurrentView(View.AuthChoice);
@@ -140,9 +139,11 @@ const App: React.FC = () => {
     setCurrentView(view);
   };
   
-  const handleRoleSelection = (role: 'jobSeeker' | 'employer') => {
-    setUserRole(role);
-    setCurrentView(View.AuthChoice);
+  const handleRoleSelection = (role: UserRole) => {
+    if(role) {
+        setUserRole(role);
+        setCurrentView(View.AuthChoice);
+    }
   };
 
   const handleAddJob = (newJobData: Omit<Job, 'id' | 'postedDate' | 'companyId'>) => {
@@ -203,10 +204,14 @@ const App: React.FC = () => {
         const profile = companyProfiles.find(p => p.id === user.profileId) || null;
         setCompanyProfile(profile);
         setCurrentView(profile ? View.PostJobForm : View.CompanyProfileSetup);
+    } else if (user.role === 'admin') {
+        setCurrentView(View.Concours);
+        setToast({ message: 'مرحباً بك أيها المدير!', type: 'success' });
     }
   };
 
   const handleSignUp = (credentials: { email: string, role: UserRole }) => {
+      if(!credentials.role) return;
       setIsAuthenticated(true);
       setUserRole(credentials.role);
       setUserProfile(null);
@@ -220,7 +225,7 @@ const App: React.FC = () => {
 
   const handleSocialLogin = async () => {
       if (!userRole) {
-        setToast({ message: 'الرجاء اختيار دورك أولاً (باحث عن عمل أو صاحب عمل).', type: 'error' });
+        setToast({ message: 'الرجاء اختيار دورك أولاً.', type: 'error' });
         return;
       }
 
@@ -228,36 +233,26 @@ const App: React.FC = () => {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         
-        // Check if user exists in mock data (to maintain consistency with prototype data)
         const existingUser = MOCK_USERS.find(u => u.email === user.email);
 
         if (existingUser) {
-             if (existingUser.role !== userRole) {
-                setToast({ message: `هذا الحساب مسجل كـ ${existingUser.role === 'jobSeeker' ? 'باحث عن عمل' : 'صاحب عمل'}. يرجى تسجيل الدخول من الخيار الصحيح.`, type: 'error'});
-                await signOut(auth); // Sign out if role mismatch
+             if (existingUser.role !== userRole && userRole !== 'admin') {
+                setToast({ message: `حساب مسجل كـ ${existingUser.role}. يرجى تسجيل الدخول من الخيار الصحيح.`, type: 'error'});
+                await signOut(auth);
                 return;
             }
             handleLogin(existingUser);
-            setToast({ message: `تم تسجيل الدخول بنجاح كـ ${user.displayName || user.email}!`, type: 'success' });
+            setToast({ message: `تم تسجيل الدخول بنجاح!`, type: 'success' });
         } else {
-            // New user via Google
              handleSignUp({ email: user.email || '', role: userRole });
-             setToast({ message: `مرحباً بك ${user.displayName || ''}! يرجى إكمال ملفك الشخصي للبدء.`, type: 'success' });
+             setToast({ message: `مرحباً بك!`, type: 'success' });
         }
       } catch (error: any) {
         console.error("Social login error:", error);
-        if (error.code === 'auth/popup-closed-by-user') {
-            // User just closed the popup, no need to show a scary error
-            return;
-        }
-        if (error.code === 'auth/unauthorized-domain') {
-            setToast({ message: 'نطاق الموقع غير مصرح به في إعدادات Firebase (Authorized Domains).', type: 'error' });
-            return;
-        }
-        setToast({ message: 'حدث خطأ أثناء تسجيل الدخول بواسطة جوجل.', type: 'error' });
+        if (error.code === 'auth/popup-closed-by-user') return;
+        setToast({ message: 'حدث خطأ أثناء تسجيل الدخول.', type: 'error' });
       }
   };
-
 
   const handleLogout = async () => {
       try {
@@ -289,35 +284,18 @@ const App: React.FC = () => {
   const handleSubmitReport = (reportData: { reason: string; details?: string; blockCompany: boolean; }) => {
     if (!reportingJob) return;
 
-    const fullReport = {
-        jobId: reportingJob.id,
-        jobTitle: reportingJob.title,
-        companyName: reportingJob.company,
-        reason: reportData.reason,
-        details: reportData.details || 'لا يوجد',
-        timestamp: new Date().toISOString(),
-        blockCompany: reportData.blockCompany,
-    };
-
-    console.log("--- NEW JOB REPORT SUBMITTED ---");
-    console.log(JSON.stringify(fullReport, null, 2));
-    
     if (reportData.blockCompany) {
-        setBlockedCompanies(prev => {
-            if (prev.includes(reportingJob.company)) return prev;
-            return [...prev, reportingJob.company];
-        });
+        setBlockedCompanies(prev => [...prev, reportingJob.company]);
         setToast({
-             message: `تم الإبلاغ عن الإعلان بنجاح. لن يتم عرض أي وظائف من شركة "${reportingJob.company}" مجددًا لك.`,
+             message: `تم الإبلاغ وحظر شركة "${reportingJob.company}".`,
              type: 'success',
          });
     } else {
         setToast({
-            message: "شكرًا لك، تم استلام بلاغك بنجاح.",
+            message: "شكرًا لك، تم استلام بلاغك.",
             type: 'success'
         });
     }
-    
     setReportingJob(null);
   };
 
@@ -354,7 +332,6 @@ const App: React.FC = () => {
   
   const handleSelectConversation = (id: number | null) => {
     setSelectedConversationId(id);
-
     if (id !== null) {
         setConversations(prevConvs =>
             prevConvs.map(conv =>
@@ -363,7 +340,6 @@ const App: React.FC = () => {
         );
     }
   };
-
 
   const handleAddNewMessage = (conversationId: number, messageText: string) => {
     setConversations(prevConvs => 
@@ -375,21 +351,6 @@ const App: React.FC = () => {
                     sender: 'me',
                     timestamp: 'الآن'
                 };
-                setTimeout(() => {
-                    setConversations(prev => prev.map(c => {
-                        if (c.id === conversationId) {
-                            const replyMessage: Message = {
-                                id: newMessage.id + 1,
-                                text: 'شكراً لرسالتك، سنقوم بالرد في أقرب وقت ممكن.',
-                                sender: 'other',
-                                timestamp: 'الآن'
-                            };
-                            return { ...c, messages: [...c.messages, replyMessage] };
-                        }
-                        return c;
-                    }));
-                }, 1500);
-
                 return { ...conv, messages: [...conv.messages, newMessage] };
             }
             return conv;
@@ -403,9 +364,19 @@ const App: React.FC = () => {
     setCurrentView(type === 'company' ? View.CompanyProfilePage : View.UserProfilePage);
   };
 
+  const handleAddConcours = (article: Omit<ConcoursArticle, 'id' | 'publishDate'>) => {
+      const newArticle: ConcoursArticle = {
+          ...article,
+          id: concours.length + 1,
+          publishDate: new Date().toISOString().split('T')[0]
+      };
+      setConcours(prev => [newArticle, ...prev]);
+      setToast({ message: 'تم نشر المباراة بنجاح!', type: 'success' });
+  };
+
   const renderContent = () => {
     switch (currentView) {
-      case View.Home: return <HomePage onSelectRole={handleRoleSelection} />;
+      case View.Home: return <HomePage onSelectRole={(role) => handleRoleSelection(role)} />;
       case View.Onboarding: return <Onboarding onOnboardingComplete={handleOnboardingComplete} />;
       case View.CompanyProfileSetup: return <CompanyProfileSetup onProfileComplete={handleCompanyProfileComplete} />;
       case View.PostJobForm: return <PostJobForm onAddJob={handleAddJob} companyProfile={companyProfile} />;
@@ -437,6 +408,12 @@ const App: React.FC = () => {
         return <UserProfileView
                     profile={user}
                     onBack={() => onNavigate(previousView)}
+                />;
+      case View.Concours: // New Case
+        return <ConcoursPage 
+                    concours={concours} 
+                    userRole={userRole} 
+                    onAddConcours={handleAddConcours} 
                 />;
       case View.JobBoard:
       default:
@@ -496,14 +473,12 @@ const App: React.FC = () => {
         currentFilters={filters}
       />
       
-      {/* Floating Widgets - Only show when authenticated */}
-      {isAuthenticated && isProfileComplete && (
+      {/* Floating Widgets - Only show when authenticated and not Admin */}
+      {isAuthenticated && isProfileComplete && userRole !== 'admin' && (
         <>
-             {/* Messaging Widget (Bottom Right, shifted up) */}
              {currentView !== View.Messages && (
                 <MessagingWidget />
              )}
-             {/* Notifications Widget (Bottom Right, bottom most) */}
              <NotificationsWidget />
         </>
       )}

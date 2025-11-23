@@ -4,7 +4,7 @@ import type { UserProfile } from '../types';
 import { EDUCATION_LEVELS, EXPERIENCE_LEVELS, MOROCCAN_CITIES, LANGUAGES } from '../constants';
 
 interface OnboardingProps {
-    onOnboardingComplete: (profile: UserProfile) => void;
+    onOnboardingComplete: (profile: Omit<UserProfile, 'id'>) => void;
 }
 
 const ProgressBar: React.FC<{step: number, totalSteps: number}> = ({ step, totalSteps }) => {

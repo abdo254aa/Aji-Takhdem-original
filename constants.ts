@@ -1,4 +1,6 @@
-import type { City, Job, Conversation, CompanyProfile, UserProfile, MockUser, MockGoogleAccount } from './types';
+
+
+import type { City, Job, Conversation, CompanyProfile, UserProfile, MockUser, MockGoogleAccount, ConcoursArticle } from './types';
 
 export const MOROCCAN_CITIES: City[] = [
   "الدار البيضاء",
@@ -97,6 +99,8 @@ export const MOCK_USERS: MockUser[] = [
     { email: 'google-seeker@test.com', password: 'password123', role: 'jobSeeker', profileId: 1 },
     { email: 'google-company@test.com', password: 'password123', role: 'employer', profileId: 2 },
     { email: 'new@seeker.com', password: 'password123', role: 'jobSeeker', profileId: null },
+    // ADMIN USER
+    { email: 'admin@ajitkhdem.ma', password: 'admin123', role: 'admin', profileId: null },
 ];
 
 export const MOCK_GOOGLE_ACCOUNTS: MockGoogleAccount[] = [
@@ -162,6 +166,160 @@ export const INITIAL_JOBS: Job[] = [
         postedDate: "2024-07-24",
         experience: "5+ سنوات",
     },
+];
+
+// Helper to get current date parts
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = String(now.getMonth() + 1).padStart(2, '0'); // 01 to 12
+const d = (day: number) => `${currentYear}-${currentMonth}-${String(day).padStart(2, '0')}`;
+
+export const MOCK_CONCOURS: ConcoursArticle[] = [
+    {
+        id: 1,
+        title: "مباراة توظيف 100 متصرف من الدرجة الثانية بوزارة الاقتصاد والمالية",
+        department: "وزارة الاقتصاد والمالية",
+        deadline: d(28),
+        publishDate: d(15),
+        content: `تعلن وزارة الاقتصاد والمالية عن تنظيم مباراة لتوظيف 100 متصرف من الدرجة الثانية. تفتح المباراة في وجه المترشحين الحاصلين على دبلوم الدراسات العليا المعمقة أو دبلوم الدراسات العليا المتخصصة أو الماستر أو الماستر المتخصص.`,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 2,
+        title: "مباراة التعليم بالتعاقد: الشروط والآجال الجديدة",
+        department: "وزارة التربية الوطنية",
+        deadline: d(30),
+        publishDate: d(14),
+        content: `استعداداً للموسم الدراسي المقبل، تعلن الأكاديميات الجهوية للتربية والتكوين عن فتح باب الترشيح لمباريات توظيف الأطر النظامية للأكاديميات.`,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 3,
+        title: "مباراة الأمن الوطني: توظيف حراس أمن ومفتشي شرطة",
+        department: "المديرية العامة للأمن الوطني",
+        deadline: d(25),
+        publishDate: d(12),
+        content: `تنظم المديرية العامة للأمن الوطني مباراة لتوظيف حراس الأمن ومفتشي الشرطة وضباط الشرطة وضباط الأمن وعمداء الشرطة.`,
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 4,
+        title: "مباراة ضخمة لوزارة الصحة والحماية الاجتماعية لتوظيف 500 ممرض وتقني صحة",
+        department: "وزارة الصحة",
+        deadline: d(29),
+        publishDate: d(10),
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png",
+        content: `
+تعلن وزارة الصحة والحماية الاجتماعية عن تنظيم مباراة لتوظيف 500 ممرض وتقني صحة من الدرجة الأولى.
+
+**أولاً: شروط الترشيح**
+تفتح المباراة في وجه المترشحين من جنسية مغربية، البالغين من العمر 18 سنة على الأقل و45 سنة على الأكثر في فاتح يناير من السنة الجارية، والحاصلين على دبلوم الإجازة في المسالك العلمية والتقنية أو ما يعادلها.
+
+**ثانياً: التخصصات المطلوبة**
+1. التمريض متعدد التخصصات: 200 منصب.
+2. التخدير والإنعاش: 100 منصب.
+3. الصحة النفسية والعقلية: 50 منصب.
+4. تقنيات المختبر: 50 منصب.
+5. تقنيات الأشعة: 50 منصب.
+6. القبالة: 50 منصب.
+
+**ثالثاً: ملف الترشيح**
+يتكون ملف الترشيح من الوثائق التالية:
+- طلب خطي يبين فيه المترشح الاسم العائلي والشخصي والعنوان ورقم الهاتف والتخصص المطلوب.
+- نسخة مشهود بمطابقتها لأصل الدبلوم في التخصص المطلوب.
+- نسخة مشهود بمطابقتها لأصل بطاقة التعريف الوطنية.
+- 3 أظرف متنبرة تحمل اسم وعنوان المترشح.
+- سيرة ذاتية (CV) مفصلة.
+
+**رابعاً: مواد المباراة**
+تشتمل المباراة على اختبارين كتابيين واختبار شفوي:
+1. **اختبار عام:** يتعلق بقطاع الصحة والحماية الاجتماعية (المدة: 3 ساعات، المعامل: 3).
+2. **اختبار تخصص:** يتعلق بالتخصص المطلوب (المدة: 3 ساعات، المعامل: 4).
+3. **اختبار شفوي:** تناقش فيه لجنة المباراة مع المترشح مواضيع مختلفة (المدة: 20 دقيقة، المعامل: 3).
+
+**خامساً: إيداع الملفات**
+يجب أن تصل ملفات الترشيح إلى المديريات الجهوية للصحة قبل تاريخ ${d(29)}، ولن يؤخذ بعين الاعتبار أي ملف يصل بعد هذا الأجل.
+
+**ملاحظات هامة:**
+- يعتبر لاغياً كل ملف ترشيح تنقصه وثيقة من الوثائق المذكورة.
+- سيتم نشر لوائح المترشحين المقبولين لاجتياز الاختبار الكتابي على الموقع الإلكتروني للوزارة.
+- الحضور إلى مركز الامتحان يكون مصحوباً ببطاقة التعريف الوطنية.
+
+نتمنى التوفيق لجميع المترشحين والمترشحات في هذه المباراة المهمة التي تهدف إلى تعزيز الموارد البشرية بقطاع الصحة.
+        `
+    },
+    {
+        id: 5,
+        title: "مباراة توظيف 50 تقني من الدرجة الثالثة بجماعة الدار البيضاء",
+        department: "جماعة الدار البيضاء",
+        deadline: d(22),
+        publishDate: d(8),
+        content: "تعلن جماعة الدار البيضاء عن تنظيم مباراة لتوظيف تقنيين من الدرجة الثالثة في تخصصي الهندسة المدنية والمعلوميات.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 6,
+        title: "المكتب الوطني للسكك الحديدية (ONCF): توظيف 40 سائق قطار",
+        department: "ONCF",
+        deadline: d(20),
+        publishDate: d(7),
+        content: "ينظم المكتب الوطني للسكك الحديدية مباراة لتوظيف سائقي قطارات. الشروط: دبلوم تقني متخصص، السن أقل من 30 سنة.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 7,
+        title: "مباراة القياد 2024: وزارة الداخلية تفتح باب الترشيح",
+        department: "وزارة الداخلية",
+        deadline: d(18),
+        publishDate: d(6),
+        content: "وزارة الداخلية تعلن عن مباراة ولوج السلك العادي للمعهد الملكي للإدارة الترابية (قياد).",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 8,
+        title: "الصندوق الوطني للضمان الاجتماعي: توظيف 150 إطار",
+        department: "CNSS",
+        deadline: d(15),
+        publishDate: d(5),
+        content: "CNSS يعلن عن حملة توظيف واسعة تهم 150 منصباً في مختلف التخصصات المالية والقانونية.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 9,
+        title: "وكالة التنمية الرقمية: توظيف مهندسي دولة",
+        department: "وكالة التنمية الرقمية",
+        deadline: d(12),
+        publishDate: d(4),
+        content: "مباراة لتوظيف 10 مهندسي دولة في تخصصات الذكاء الاصطناعي والأمن السيبراني.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 10,
+        title: "وزارة العدل: مباراة الملحقين القضائيين",
+        department: "وزارة العدل",
+        deadline: d(10),
+        publishDate: d(3),
+        content: "تعلن وزارة العدل عن تنظيم مباراة لتوظيف 250 ملحقاً قضائياً.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 11,
+        title: "المجمع الشريف للفوسفاط OCP: حملة توظيف",
+        department: "OCP Group",
+        deadline: d(9),
+        publishDate: d(2),
+        content: "مجموعة OCP تطلق حملة لتوظيف مهندسين وتقنيين في المواقع الصناعية.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    },
+    {
+        id: 12,
+        title: "بريد المغرب: توظيف سعاة بريد وموزعين",
+        department: "بريد المغرب",
+        deadline: d(5),
+        publishDate: d(1),
+        content: "بريد المغرب ينظم مباراة لتوظيف 80 ساعي بريد على الصعيد الوطني.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Emblem_of_Morocco.svg/800px-Emblem_of_Morocco.svg.png"
+    }
 ];
 
 export const EDUCATION_LEVELS = [

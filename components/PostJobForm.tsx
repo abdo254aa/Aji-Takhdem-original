@@ -4,7 +4,7 @@ import { MOROCCAN_CITIES, EDUCATION_LEVELS, EXPERIENCE_LEVELS, LANGUAGES } from 
 import type { Job, CompanyProfile } from '../types';
 
 interface PostJobFormProps {
-    onAddJob: (job: Omit<Job, 'id' | 'postedDate'>) => void;
+    onAddJob: (job: Omit<Job, 'id' | 'postedDate' | 'companyId'>) => void;
     companyProfile: CompanyProfile | null;
 }
 
