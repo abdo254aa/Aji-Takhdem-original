@@ -27,7 +27,7 @@ import UserProfileView from './components/UserProfileView';
 import PrivacyPolicyPage from './components/PrivacyPolicyPage';
 import MessagingWidget from './components/MessagingWidget';
 import NotificationsWidget from './components/NotificationsWidget';
-import ConcoursPage from './components/ConcoursPage'; // Import ConcoursPage
+import { ConcoursPage } from './components/ConcoursPage';
 import { auth, googleProvider } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
