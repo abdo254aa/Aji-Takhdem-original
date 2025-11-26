@@ -16,7 +16,7 @@ interface Comment {
     date: string;
 }
 
-// Mock Images for variety in the sidebar
+// Mock Images for variety in the sidebar and main list
 const SIDEBAR_IMAGES = [
     "https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
     "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
@@ -173,11 +173,11 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
             .slice(0, 3);
 
         return (
-            <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-4 transition-colors duration-300">
-                <div className="container mx-auto px-2 max-w-full">
+            <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-4 transition-colors duration-300 overflow-x-hidden">
+                <div className="w-full">
                     
                     {/* Header: Back Button & Title Card */}
-                    <div className="mb-4">
+                    <div className="mb-4 px-4">
                         <button 
                             onClick={handleBack} 
                             className="flex items-center text-indigo-600 dark:text-indigo-400 font-bold mb-3 hover:underline transition-all text-sm"
@@ -207,26 +207,26 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                     </div>
 
                     {/* Main Layout Grid */}
-                    <div className="flex flex-col lg:flex-row gap-4 items-start">
+                    <div className="flex flex-col lg:flex-row gap-0 items-start">
                         
-                        {/* Sidebar (Right Side in RTL) */}
-                        <div className="w-full lg:w-[25%] space-y-3 order-1 sticky top-24 h-fit">
+                        {/* Sidebar (Right Side in RTL) - Stuck to wall - MATCHING MAIN PAGE SIZE */}
+                        <div className="w-full lg:w-[25%] space-y-2 order-1 sticky top-24 h-fit z-10">
                             
                             {/* 1. Latest Updates */}
-                            <div className="bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                <h3 className="font-bold text-slate-800 dark:text-white mb-2 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-lg">
+                            <div className="bg-white dark:bg-slate-800 p-3 rounded-l-2xl rounded-r-none shadow-sm border-y border-l border-slate-200 dark:border-slate-700 border-r-0">
+                                <h3 className="font-bold text-slate-800 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-base">
                                     <span className="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
                                     آخر المستجدات
                                 </h3>
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     {latestUpdatesList.map((job, idx) => (
                                         <div 
                                             key={job.id} 
                                             onClick={() => handleArticleClick(job)}
-                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-xl transition-colors flex flex-row gap-3"
+                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-lg transition-colors flex flex-row gap-3"
                                         >
-                                            {/* Image Card - Size 130x90 */}
-                                            <div className="w-[130px] h-[90px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
+                                            {/* Image Card - Size 160x110 (Same as Main Page) */}
+                                            <div className="w-[160px] h-[110px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
                                                 <img 
                                                     src={getRandomImage(idx)} 
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
@@ -238,7 +238,7 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                                                 <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-tight group-hover:text-indigo-600 transition-colors line-clamp-3">
                                                     {job.title}
                                                 </h4>
-                                                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block font-medium">{job.publishDate}</span>
+                                                <span className="text-base font-black text-indigo-600 dark:text-indigo-400 mt-2 block">{job.publishDate}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -246,20 +246,20 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                             </div>
 
                             {/* 2. Newsletter */}
-                            <div className="bg-gradient-to-br from-slate-800 to-indigo-900 p-4 rounded-2xl text-white shadow-lg relative overflow-hidden">
+                            <div className="bg-gradient-to-br from-slate-800 to-indigo-900 p-3 rounded-l-2xl rounded-r-none text-white shadow-lg relative overflow-hidden">
                                 <div className="relative z-10">
-                                    <div className="flex items-center gap-2 mb-2">
+                                    <div className="flex items-center gap-2 mb-1">
                                         <EmailIcon />
-                                        <h3 className="font-bold text-lg">النشرة البريدية</h3>
+                                        <h3 className="font-bold text-base">النشرة البريدية</h3>
                                     </div>
-                                    <p className="text-indigo-100 text-sm mb-3 leading-relaxed">توصل بآخر المباريات وعروض العمل الحكومية فور نشرها.</p>
-                                    <div className="flex flex-col gap-2">
+                                    <p className="text-indigo-100 text-xs mb-2 leading-relaxed">توصل بآخر المستجدات فور نشرها.</p>
+                                    <div className="flex flex-col gap-1.5">
                                         <input 
                                             type="email" 
                                             placeholder="البريد الإلكتروني" 
-                                            className="w-full p-2.5 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-indigo-400 outline-none border-none"
+                                            className="w-full p-2 rounded-lg text-slate-900 text-xs focus:ring-2 focus:ring-indigo-400 outline-none border-none"
                                         />
-                                        <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl transition shadow-md text-sm">
+                                        <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-lg transition shadow-md text-xs">
                                             اشترك الآن
                                         </button>
                                     </div>
@@ -267,20 +267,20 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                             </div>
 
                             {/* 3. Featured Offers */}
-                            <div className="bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                                <h3 className="font-bold text-slate-800 dark:text-white mb-2 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-lg">
+                            <div className="bg-white dark:bg-slate-800 p-3 rounded-l-2xl rounded-r-none shadow-sm border-y border-l border-slate-200 dark:border-slate-700 border-r-0">
+                                <h3 className="font-bold text-slate-800 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2 text-base">
                                     <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span>
                                     عروض مميزة
                                 </h3>
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     {featuredOffersList.map((job, idx) => (
                                          <div 
                                             key={job.id} 
                                             onClick={() => handleArticleClick(job)}
-                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-xl transition-colors flex flex-row gap-3"
+                                            className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-lg transition-colors flex flex-row gap-3"
                                         >
-                                            {/* Image Card - Size 130x90 */}
-                                            <div className="w-[130px] h-[90px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
+                                            {/* Image Card - Size 160x110 (Same as Main Page) */}
+                                            <div className="w-[160px] h-[110px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
                                                 <img 
                                                     src={getRandomImage(idx + 5)} 
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
@@ -292,7 +292,7 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                                                 <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-tight group-hover:text-indigo-600 transition-colors line-clamp-3">
                                                     {job.title}
                                                 </h4>
-                                                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block font-medium">{job.publishDate}</span>
+                                                <span className="text-base font-black text-indigo-600 dark:text-indigo-400 mt-2 block">{job.publishDate}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -302,7 +302,7 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                         </div>
 
                         {/* Main Content (Left Side in RTL) */}
-                        <div className="flex-1 space-y-4 order-2">
+                        <div className="flex-1 space-y-4 order-2 px-4 lg:px-2 pt-4 lg:pt-0">
                             {/* Article Text */}
                             <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 text-slate-800 dark:text-slate-200">
                                 <div className="flex justify-between items-start mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
@@ -395,10 +395,10 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
 
     // ---- LIST VIEW (DEFAULT) ----
     return (
-        <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-6 transition-colors duration-300">
-            <div className="container mx-auto px-2 max-w-full">
+        <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-6 transition-colors duration-300 overflow-x-hidden">
+            <div className="w-full">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 px-4">
                     <div>
                         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">مباريات الدولة</h1>
                         <p className="text-base text-slate-600 dark:text-slate-300 mt-1 font-medium">بوابة الوظائف الحكومية والمباريات العمومية بالمغرب</p>
@@ -414,9 +414,10 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                     )}
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-2 items-start">
-                    {/* Main Content (Articles List) */}
-                    <div className="flex-1">
+                <div className="flex flex-col lg:flex-row gap-6 items-start">
+                    
+                    {/* Main Content (Articles List) - First in DOM = Right in RTL */}
+                    <div className="flex-1 px-4 lg:px-2 pt-4 lg:pt-0 order-1">
                         {/* Search Bar */}
                         <div className="relative mb-6">
                              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
@@ -462,50 +463,51 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                             </div>
                         )}
 
-                        <div className="grid gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {filteredConcours.length > 0 ? (
                                 filteredConcours.map(article => (
                                     <div 
                                         key={article.id} 
                                         onClick={() => handleArticleClick(article)}
-                                        className="group bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                                        className="group bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-700 transition-all duration-300 cursor-pointer transform hover:-translate-y-1 overflow-hidden flex flex-col"
                                     >
-                                        <div className="flex flex-col md:flex-row gap-5">
-                                            {/* Image Section - Sized down */}
-                                            <div className="w-full md:w-32 h-32 flex-shrink-0 bg-slate-50 dark:bg-slate-700/50 rounded-xl flex items-center justify-center p-3 border border-slate-100 dark:border-slate-600 overflow-hidden">
-                                                <img src={article.image || 'https://via.placeholder.com/150'} alt={article.department} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                                        {/* Image Section - BIG Image on Top */}
+                                        <div className="w-full h-56 bg-slate-50 dark:bg-slate-700/50 relative overflow-hidden">
+                                            <img src={getRandomImage(article.id)} alt={article.department} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                            <div className="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-slate-800 dark:text-white border border-slate-100 dark:border-slate-600 shadow-sm">
+                                                {article.department}
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Content Section */}
+                                        <div className="p-5 flex-grow flex flex-col">
+                                            <div className="flex items-center gap-2 mb-3 text-xs text-slate-400 font-medium">
+                                                <CalendarIcon />
+                                                <span>نشر: {article.publishDate}</span>
                                             </div>
                                             
-                                            {/* Content Section */}
-                                            <div className="flex-grow flex flex-col">
-                                                <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
-                                                    <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-600">
-                                                        <BuildingLibraryIcon />
-                                                        <span className="mr-2">{article.department}</span>
-                                                    </div>
-                                                    <span className="text-xs text-slate-400 font-medium bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md">{article.publishDate}</span>
-                                                </div>
-                                                
-                                                <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug">
-                                                    {article.title}
-                                                </h2>
-                                                
-                                                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed line-clamp-2 mb-3">
-                                                    {article.content}
-                                                </p>
-                                                
-                                                <div className="mt-auto flex items-center justify-end">
-                                                    <span className="text-indigo-600 dark:text-indigo-400 text-sm font-bold group-hover:underline flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1.5 rounded-lg transition-colors group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40">
-                                                        عرض التفاصيل 
-                                                        <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                                                    </span>
-                                                </div>
+                                            <h2 className="text-lg font-extrabold text-slate-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug line-clamp-2">
+                                                {article.title}
+                                            </h2>
+                                            
+                                            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed line-clamp-3 mb-4">
+                                                {article.content}
+                                            </p>
+                                            
+                                            <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                                <span className="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md">
+                                                    آخر أجل: {article.deadline}
+                                                </span>
+                                                <span className="text-indigo-600 dark:text-indigo-400 text-sm font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                                                    تفاصيل
+                                                    <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                                <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm col-span-full">
                                     <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">لا توجد نتائج مطابقة</h3>
                                     <p className="text-slate-500 dark:text-slate-400">جرب تغيير كلمات البحث أو تصفح الأقسام الأخرى.</p>
                                 </div>
@@ -513,22 +515,24 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                         </div>
                     </div>
 
-                    {/* Sidebar */}
-                    <div className="w-full lg:w-[38%] space-y-3 sticky top-24 h-fit">
-                        {/* 1. Latest Updates */}
-                        <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 className="font-bold text-slate-800 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-slate-700 text-lg flex items-center gap-2">
+                    {/* Sidebar (Left Side in RTL) - Second in DOM = Left in RTL */}
+                    <div className="w-full lg:w-[28%] space-y-4 sticky top-24 h-fit z-10 order-2">
+                        
+                        {/* 1. Latest Updates - STANDARD SIZE */}
+                        <div className="bg-white dark:bg-slate-800 p-4 rounded-r-2xl rounded-l-none shadow-md border-y border-r border-slate-200 dark:border-slate-700 border-l-0">
+                            <h3 className="font-bold text-slate-800 dark:text-white mb-4 pb-3 border-b border-slate-100 dark:border-slate-700 text-lg flex items-center gap-2">
                                 <span className="w-1.5 h-6 bg-rose-500 rounded-full"></span>
                                 آخر المستجدات
                             </h3>
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                                 {latestUpdates.map((update, idx) => (
                                     <div 
                                         key={update.id} 
                                         onClick={() => handleArticleClick(update)}
-                                        className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-xl transition-colors flex flex-row gap-3" 
+                                        className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-xl transition-colors flex flex-row gap-4" 
                                     >
-                                        <div className="w-[130px] h-[90px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-100 dark:border-slate-600 shadow-sm relative">
+                                        {/* Standard Image Size: 160x110 */}
+                                        <div className="w-[160px] h-[110px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-100 dark:border-slate-600 shadow-sm relative">
                                             <img 
                                                 src={getRandomImage(idx)} 
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
@@ -536,10 +540,10 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                                             />
                                         </div>
                                         <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                            <h4 className="text-base font-bold text-slate-800 dark:text-white leading-tight group-hover:text-indigo-600 transition-colors mb-1 line-clamp-3">
+                                            <h4 className="text-sm font-bold text-slate-800 dark:text-white leading-tight group-hover:text-indigo-600 transition-colors line-clamp-3 mb-2">
                                                 {update.title}
                                             </h4>
-                                            <span className="text-xs text-slate-400 font-medium block">
+                                            <span className="text-sm font-black text-indigo-600 dark:text-indigo-400 block bg-indigo-50 dark:bg-indigo-900/30 w-fit px-2 py-0.5 rounded text-xs">
                                                 {update.publishDate}
                                             </span>
                                         </div>
@@ -548,21 +552,42 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                             </div>
                         </div>
 
-                        {/* 2. Featured Offers */}
-                        <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 className="font-bold text-slate-800 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-slate-700 text-lg flex items-center gap-2">
+                        {/* 2. Newsletter */}
+                        <div className="bg-gradient-to-br from-slate-800 to-indigo-900 p-5 rounded-r-2xl rounded-l-none text-white shadow-lg relative overflow-hidden">
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <EmailIcon />
+                                    <h3 className="font-bold text-lg">النشرة البريدية</h3>
+                                </div>
+                                <p className="text-indigo-100 text-sm mb-4 leading-relaxed">توصل بآخر المستجدات فور نشرها.</p>
+                                <div className="flex flex-col gap-2.5">
+                                    <input 
+                                        type="email" 
+                                        placeholder="البريد الإلكتروني" 
+                                        className="w-full p-3 rounded-xl text-slate-900 text-sm focus:ring-2 focus:ring-indigo-400 outline-none border-none shadow-inner"
+                                    />
+                                    <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl transition shadow-md text-sm">
+                                        اشترك الآن
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3. Featured Offers - STANDARD SIZE */}
+                        <div className="bg-white dark:bg-slate-800 p-4 rounded-r-2xl rounded-l-none shadow-md border-y border-r border-slate-200 dark:border-slate-700 border-l-0">
+                            <h3 className="font-bold text-slate-800 dark:text-white mb-4 pb-3 border-b border-slate-100 dark:border-slate-700 text-lg flex items-center gap-2">
                                 <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span>
                                 عروض مميزة
                             </h3>
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                                 {featuredOffers.map((job, idx) => (
                                         <div 
                                         key={job.id} 
                                         onClick={() => handleArticleClick(job)}
-                                        className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-xl transition-colors flex flex-row gap-3"
+                                        className="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 p-2 rounded-xl transition-colors flex flex-row gap-4"
                                     >
-                                        {/* Image Card - Size 130x90 */}
-                                        <div className="w-[130px] h-[90px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
+                                        {/* Standard Image Size: 160x110 */}
+                                        <div className="w-[160px] h-[110px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative shadow-sm border border-gray-100 dark:border-slate-600">
                                             <img 
                                                 src={getRandomImage(idx + 5)} 
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
@@ -571,10 +596,12 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                                         </div>
                                         
                                         <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                            <h4 className="text-base font-bold text-slate-800 dark:text-white leading-tight group-hover:text-indigo-600 transition-colors mb-1 line-clamp-3">
+                                            <h4 className="text-sm font-bold text-slate-800 dark:text-white leading-tight group-hover:text-indigo-600 transition-colors line-clamp-3 mb-2">
                                                 {job.title}
                                             </h4>
-                                            <span className="text-xs text-slate-400 mt-1 block">{job.publishDate}</span>
+                                            <span className="text-sm font-black text-indigo-600 dark:text-indigo-400 block bg-indigo-50 dark:bg-indigo-900/30 w-fit px-2 py-0.5 rounded text-xs">
+                                                {job.publishDate}
+                                            </span>
                                         </div>
                                     </div>
                                 ))}
@@ -582,8 +609,8 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                         </div>
 
                          {/* 3. Categories */}
-                        <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                            <h3 className="font-bold text-slate-800 dark:text-white mb-3 pb-2 border-b border-slate-100 dark:border-slate-700 text-base">تصنيفات شائعة</h3>
+                        <div className="bg-white dark:bg-slate-800 p-4 rounded-r-2xl rounded-l-none shadow-md border-y border-r border-slate-200 dark:border-slate-700 border-l-0">
+                            <h3 className="font-bold text-slate-800 dark:text-white mb-3 pb-3 border-b border-slate-100 dark:border-slate-700 text-base">تصنيفات شائعة</h3>
                             <ul className="space-y-2">
                                 {[
                                     { name: "قطاع التعليم", color: "bg-blue-500" },
@@ -602,7 +629,9 @@ export const ConcoursPage: React.FC<ConcoursPageProps> = ({ concours, userRole, 
                             </ul>
                         </div>
                     </div>
+
                 </div>
             </div>
-        );
+        </div>
+    );
 };
